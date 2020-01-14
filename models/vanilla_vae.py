@@ -107,11 +107,13 @@ class VanillaVAE(BaseVAE):
                       mu: Tensor,
                       log_var: Tensor) -> Tensor:
 
-        bce_loss = F.binary_cross_entropy(recons.view(-1), input.view(-1))
+        recons_loss =F.mse_loss(recons,
+                                input,
+                                reduction='mean')
+
 
         kld_loss = -0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp())
-        kld_loss /= input.view(-1).size(0)
-
-        return bce_loss + kld_loss
+        kld_loss /= input.size(0)
+        return recons_loss + kld_loss
 
 

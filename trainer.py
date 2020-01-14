@@ -1,3 +1,4 @@
+import torch
 import pytorch_lightning as pl
 from models import BaseVAE
 from torchvision import transforms
@@ -17,10 +18,17 @@ class VAETrainer(pl.LightningModule):
 
         self.model = vae_model
         self.params = params
+        torch.manual_seed(self.params.manual_seed)
+        self.curr_device = None
 
+    def forward(self, input: Tensor):
+        return self.model(input)
 
     def training_step(self, batch, batch_idx):
         real_img, _ = batch
+
+        self.curr_device = real_img.device
+
         recons_img, mu, log_var = self.model(real_img)
         loss = self.model.loss_function(recons_img, real_img, mu, log_var)
 
@@ -34,10 +42,27 @@ class VAETrainer(pl.LightningModule):
         loss = self.model.loss_function(recons_img, real_img, mu, log_var)
 
         self.logger.experiment.log({'val_loss': loss.item()})
-        return {'loss': loss}
+        return {'val_loss': loss}
 
     def validation_end(self, outputs):
-        pass
+        avg_loss = torch.stack([x['val_loss'] for x in outputs]).mean()
+        tensorboard_logs = {'val_loss': avg_loss}
+        return {'val_loss': avg_loss, 'log': tensorboard_logs}
+
+    def on_epoch_end(self):
+        z = torch.randn(self.params.batch_size,
+                        128).view(self.params.batch_size, -1, 1, 1)
+
+        if self.on_gpu:
+            z = z.cuda(self.curr_device)
+
+        samples = self.model.decode(z).cpu()
+        # print(samples.shape)
+        grid = vutils.make_grid(samples, nrow=12)
+        # print(grid.shape)
+        self.logger.experiment.add_image(f'Samples', grid, self.current_epoch)
+        vutils.save_image(samples.data, f"sample_{self.current_epoch}.png", normalize=True, nrow=12)
+
 
     def configure_optimizers(self):
         optimizer = optim.Adam(self.model.parameters(), lr=self.params.LR)
@@ -68,10 +93,3 @@ class VAETrainer(pl.LightningModule):
                                  download=True),
                                batch_size= self.params.batch_size,
                                drop_last=True)
-
-    # Utils
-    def save_samples(self):
-        recons_img = 0
-        vutils.save_image(recons_img,
-                          f"{self.logger.save_dir}/fake_samples.png",
-                          normalize=True)

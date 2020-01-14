@@ -1,11 +1,15 @@
 import torch
 from models import BaseVAE
 from torch import nn
+from torch.distributions import Gamma
 from torch.nn import functional as F
 from .types_ import *
 
 
 class GammaVAE(BaseVAE):
+    """
+    https://github.com/darleybarreto/vae-pytorch/blob/419d861089ab2a84ff154d550866629e526ff81f/models/gamma_vae.py
+    """
 
     def __init__(self,
                  in_channels: int,
@@ -84,14 +88,8 @@ class GammaVAE(BaseVAE):
         result = self.final_layer(result)
         return result
 
-    def reparameterize(self, mu: Tensor, logvar: Tensor) -> Tensor:
-        """
-        Will a single z be enough ti compute the expectation
-        for the loss??
-        :param mu: (Tensor) Mean of the latent Gaussian
-        :param logvar: (Tensor) Standard deviation of the latent Gaussian
-        :return:
-        """
+    def reparameterize(self, alpha: Tensor, beta: Tensor) -> Tensor:
+
         std = torch.exp(0.5 * logvar)
         eps = torch.randn_like(std)
         return eps * std + mu
