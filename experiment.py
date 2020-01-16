@@ -28,12 +28,9 @@ class VAEXperiment(pl.LightningModule):
         real_img, _ = batch
         self.curr_device = real_img.device
 
-        recons_img, mu, log_var = self.forward(real_img)
+        results = self.forward(real_img)
 
-        train_loss = self.model.loss_function(recons_img,
-                                              real_img,
-                                              mu,
-                                              log_var,
+        train_loss = self.model.loss_function(*results,
                                               M_N = self.params.batch_size/ self.num_train_imgs )
 
         self.logger.experiment.log({key: val.item() for key, val in train_loss.items()})
@@ -42,14 +39,10 @@ class VAEXperiment(pl.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         real_img, _ = batch
-        recons_img, mu, log_var = self.forward(real_img)
-        val_loss = self.model.loss_function(recons_img,
-                                            real_img,
-                                            mu,
-                                            log_var,
-                                            M_N = self.params.batch_size/ self.num_train_imgs )
+        results = self.forward(real_img)
+        val_loss = self.model.loss_function(*results,
+                                            M_N = self.params.batch_size/ self.num_train_imgs)
 
-        # self.logger.experiment.log({key: val.item() for key, val in val_loss.items()})
         return val_loss
 
     def validation_end(self, outputs):
@@ -71,6 +64,7 @@ class VAEXperiment(pl.LightningModule):
                           f"{self.logger.save_dir}/{self.logger.name}/sample_{self.current_epoch}.png",
                           normalize=True,
                           nrow=int(math.sqrt(self.params.batch_size)))
+
 
 
     def configure_optimizers(self):

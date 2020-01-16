@@ -1,5 +1,5 @@
 import torch
-from models import VanillaVAE
+from models import VanillaVAE, WAE_MMD
 from experiment import VAEXperiment
 from pytorch_lightning import Trainer
 from pytorch_lightning.logging import TestTubeLogger
@@ -7,7 +7,7 @@ from pytorch_lightning.logging import TestTubeLogger
 
 tt_logger = TestTubeLogger(
     save_dir="logs/",
-    name="VanillaVAE",
+    name="WassersteinVAE",
     debug=False,
     create_git_tag=False,
 )
@@ -23,9 +23,11 @@ class hparams(object):
         self.img_size = 64
         self.manual_seed = 1256
 
+
 hyper_params = hparams()
 torch.manual_seed = hyper_params.manual_seed
-model = VanillaVAE(in_channels=3, latent_dim=128)
+# model = VanillaVAE(in_channels=3, latent_dim=128)
+model = WAE_MMD(in_channels=3, latent_dim=128, reg_weight=100)
 experiment = VAEXperiment(model,
                           hyper_params)
 

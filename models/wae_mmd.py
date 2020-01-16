@@ -10,10 +10,16 @@ class WAE_MMD(BaseVAE):
     def __init__(self,
                  in_channels: int,
                  latent_dim: int,
-                 hidden_dims: List = None) -> None:
+                 hidden_dims: List = None,
+                 reg_weight: int = 100,
+                 kernel_type: str = 'imq',
+                 latent_var: float = 2.) -> None:
         super(WAE_MMD, self).__init__()
 
         self.latent_dim = latent_dim
+        self.reg_weight = reg_weight
+        self.kernel_type = kernel_type
+        self.z_var = latent_var
 
         modules = []
         if hidden_dims is None:
@@ -31,8 +37,7 @@ class WAE_MMD(BaseVAE):
             in_channels = h_dim
 
         self.encoder = nn.Sequential(*modules)
-        self.fc_mu = nn.Linear(hidden_dims[-1]*4, latent_dim)
-        self.fc_var = nn.Linear(hidden_dims[-1]*4, latent_dim)
+        self.fc_z = nn.Linear(hidden_dims[-1]*4, latent_dim)
 
 
         # Build Decoder
@@ -72,7 +77,7 @@ class WAE_MMD(BaseVAE):
                                       kernel_size= 3, padding= 1),
                             nn.Tanh())
 
-    def encode(self, input: Tensor) -> List[Tensor]:
+    def encode(self, input: Tensor) -> Tensor:
         """
         Encodes the input by passing through the encoder network
         and returns the latent codes.
@@ -84,10 +89,9 @@ class WAE_MMD(BaseVAE):
 
         # Split the result into mu and var components
         # of the latent Gaussian distribution
-        mu = self.fc_mu(result)
-        log_var = self.fc_var(result)
+        z = self.fc_z(result)
 
-        return [mu, log_var]
+        return z
 
     def decode(self, z: Tensor) -> Tensor:
         result = self.decoder_input(z)
@@ -96,38 +100,31 @@ class WAE_MMD(BaseVAE):
         result = self.final_layer(result)
         return result
 
-    def reparameterize(self, mu: Tensor, logvar: Tensor) -> Tensor:
-        """
-        Will a single z be enough ti compute the expectation
-        for the loss??
-        :param mu: (Tensor) Mean of the latent Gaussian
-        :param logvar: (Tensor) Standard deviation of the latent Gaussian
-        :return:
-        """
-        std = torch.exp(0.5 * logvar)
-        eps = torch.randn_like(std)
-        return eps * std + mu
-
-    def forward(self, input: Tensor) -> Tensor:
-        mu, log_var = self.encode(input)
-        z = self.reparameterize(mu, log_var)
-        return  self.decode(z), mu, log_var
+    def forward(self, input: Tensor) -> List[Tensor]:
+        z = self.encode(input)
+        return  [self.decode(z), input, z]
 
     def loss_function(self,
-                      recons: Tensor,
-                      input: Tensor,
-                      mu: Tensor,
-                      log_var: Tensor,
+                      *args,
                       **kwargs) -> dict:
+        recons = args[0]
+        input = args[1]
+        z = args[2]
+
+        batch_size = input.size(0)
+        bias_corr = batch_size *  (batch_size - 1)
+        reg_weight = self.reg_weight / bias_corr
 
         recons_loss =F.mse_loss(recons, input)
 
-        mmd_loss = self.compute_mmd()
+        mmd_loss = self.compute_mmd(z, reg_weight)
 
-        loss = recons_loss + 0.05 * mmd_loss
+        loss = recons_loss + mmd_loss
         return {'loss': loss, 'Reconstruction Loss':recons_loss, 'MMD': mmd_loss}
 
-    def compute_kernel(self, x1: Tensor, x2: Tensor) -> Tensor:
+    def compute_kernel(self,
+                       x1: Tensor,
+                       x2: Tensor) -> Tensor:
         # Convert the tensors into row and column vectors
         D = x1.size(1)
         N = x1.size(0)
@@ -141,11 +138,49 @@ class WAE_MMD(BaseVAE):
         along the 0th dimension.
         """
         x1 = x1.expand(N, N, D)
-        x2 = x1.expand(N, N, D)
+        x2 = x2.expand(N, N, D)
 
-        return torch.exp(-((x1 - x2).pow(2).mean(-1) / float(D)))
+        if self.kernel_type == 'rbf':
+            result = self.compute_rbf(x1, x2)
+        else:
+            result = self.compute_inv_mult_quad(x1, x2)
 
-    def compute_mmd(self, z: Tensor) -> Tensor:
+        return result
+
+
+    def compute_rbf(self,
+                    x1: Tensor,
+                    x2: Tensor,
+                    eps: float = 1e-7) -> Tensor:
+        D = torch.tensor(x1.size(1))
+
+        result = torch.exp(-((x1 - x2).pow(2).mean(-1) / D))
+        return result
+
+    def compute_inv_mult_quad(self,
+                               x1: Tensor,
+                               x2: Tensor,
+                               eps: float = 1e-7) -> Tensor:
+        """
+        Computes the Inverse Multi-Quadratics Kernel between x1 and x2,
+        given by
+
+                k(x_1, x_2) = \sum \frac{C}{C + \|x_1 - x_2 \|^2}
+        :param x1: (Tensor)
+        :param x2: (Tensor)
+        :param eps:
+        :return:
+        """
+        z_dim = x2.size(-1)
+        C = 2 * z_dim * self.z_var
+        kernel = C / (eps + C + (x1 - x2).pow(2).sum(dim = -1))
+
+        # Exclude diagonal elements
+        result = kernel.sum() - kernel.diag().sum()
+
+        return result
+
+    def compute_mmd(self, z: Tensor, reg_weight: float) -> Tensor:
         # Sample from prior (Gaussian) distribution
         prior_z = torch.randn_like(z)
 
@@ -153,5 +188,7 @@ class WAE_MMD(BaseVAE):
         z__kernel = self.compute_kernel(z, z)
         priorz_z__kernel = self.compute_kernel(prior_z, z)
 
-        mmd = prior_z__kernel.mean() + z__kernel.mean() - 2*priorz_z__kernel.mean()
+        mmd = reg_weight * prior_z__kernel.mean() + \
+              reg_weight * z__kernel.mean() - \
+              2 * reg_weight * priorz_z__kernel.mean()
         return mmd

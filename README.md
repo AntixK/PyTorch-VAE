@@ -7,7 +7,7 @@ TODO
 - [ ] Beta VAE
 - [ ] DFC VAE
 - [ ] InfoVAE (MMD-VAE)
-- [ ] WAE-MMD
+- [x] WAE-MMD
 - [ ] AAE
 - [ ] TwoStageVAE
 - [ ] VAE-GAN

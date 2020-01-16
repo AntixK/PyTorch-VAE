@@ -16,56 +16,61 @@ class GammaVAE(BaseVAE):
                  latent_dim: int,
                  hidden_dims: List = None) -> None:
         super(GammaVAE, self).__init__()
-
         self.latent_dim = latent_dim
 
         modules = []
         if hidden_dims is None:
-            hidden_dims = [32, 64, 128, 256]
+            hidden_dims = [32, 64, 128, 256, 512]
 
         # Build Encoder
         for h_dim in hidden_dims:
             modules.append(
                 nn.Sequential(
                     nn.Conv2d(in_channels, out_channels=h_dim,
-                              kernel_size= 3, stride= 2, padding  = 1),
+                              kernel_size=3, stride=2, padding=1),
                     nn.BatchNorm2d(h_dim),
-                    nn.ReLU())
+                    nn.LeakyReLU())
             )
             in_channels = h_dim
 
-        modules.append(
-            nn.Sequential(
-                nn.Conv2d(in_channels, out_channels= 2*latent_dim,
-                          kernel_size=3, stride=1, padding  = 1),
-                nn.BatchNorm2d(2*latent_dim),
-                nn.ReLU())
-        )
-
         self.encoder = nn.Sequential(*modules)
+        self.fc_mu = nn.Linear(hidden_dims[-1] * 4, latent_dim)
+        self.fc_var = nn.Linear(hidden_dims[-1] * 4, latent_dim)
 
         # Build Decoder
         modules = []
-        in_channels = latent_dim
 
-        for _ in range(len(hidden_dims)):
+        self.decoder_input = nn.Linear(latent_dim, hidden_dims[-1] * 4)
+
+        hidden_dims.reverse()
+
+        for i in range(len(hidden_dims) - 1):
             modules.append(
                 nn.Sequential(
-                    nn.Conv2d(in_channels, out_channels=64,
-                              kernel_size= 3, padding= 1),
-                    nn.BatchNorm2d(64),
-                    nn.ReLU(),
-                    nn.Upsample(scale_factor=2, mode='bilinear',
-                               align_corners=True))
+                    nn.ConvTranspose2d(hidden_dims[i],
+                                       hidden_dims[i + 1],
+                                       kernel_size=3,
+                                       stride=2,
+                                       padding=1,
+                                       output_padding=1),
+                    nn.BatchNorm2d(hidden_dims[i + 1]),
+                    nn.LeakyReLU())
             )
-            in_channels = 64
 
         self.decoder = nn.Sequential(*modules)
 
         self.final_layer = nn.Sequential(
-                            nn.Conv2d(64, out_channels= 3,
-                                      kernel_size= 3, padding= 1),
-                            nn.Sigmoid())
+            nn.ConvTranspose2d(hidden_dims[-1],
+                               hidden_dims[-1],
+                               kernel_size=3,
+                               stride=2,
+                               padding=1,
+                               output_padding=1),
+            nn.BatchNorm2d(hidden_dims[-1]),
+            nn.LeakyReLU(),
+            nn.Conv2d(hidden_dims[-1], out_channels=3,
+                      kernel_size=3, padding=1),
+            nn.Tanh())
 
     def encode(self, input: Tensor) -> List[Tensor]:
         """
@@ -75,21 +80,30 @@ class GammaVAE(BaseVAE):
         :return: (Tensor) List of latent codes
         """
         result = self.encoder(input)
+        result = torch.flatten(result, start_dim=1)
 
         # Split the result into mu and var components
         # of the latent Gaussian distribution
-        mu = result[:, :self.latent_dim, :, :]
-        log_var = result[:, self.latent_dim:, :, :]
+        mu = self.fc_mu(result)
+        log_var = self.fc_var(result)
 
         return [mu, log_var]
 
     def decode(self, z: Tensor) -> Tensor:
-        result = self.decoder(z)
+        result = self.decoder_input(z)
+        result = result.view(-1, 512, 2, 2)
+        result = self.decoder(result)
         result = self.final_layer(result)
         return result
 
-    def reparameterize(self, alpha: Tensor, beta: Tensor) -> Tensor:
-
+    def reparameterize(self, mu: Tensor, logvar: Tensor) -> Tensor:
+        """
+        Will a single z be enough ti compute the expectation
+        for the loss??
+        :param mu: (Tensor) Mean of the latent Gaussian
+        :param logvar: (Tensor) Standard deviation of the latent Gaussian
+        :return:
+        """
         std = torch.exp(0.5 * logvar)
         eps = torch.randn_like(std)
         return eps * std + mu
@@ -97,19 +111,20 @@ class GammaVAE(BaseVAE):
     def forward(self, input: Tensor) -> Tensor:
         mu, log_var = self.encode(input)
         z = self.reparameterize(mu, log_var)
-        return  self.decode(z), mu, log_var
+        return self.decode(z), mu, log_var
 
     def loss_function(self,
-                      recons: Tensor,
-                      input: Tensor,
-                      mu: Tensor,
-                      log_var: Tensor) -> Tensor:
+                      *args,
+                      **kwargs) -> dict:
+        recons = args[0]
+        input = args[1]
+        mu = args[2]
+        log_var = args[3]
 
-        bce_loss = F.binary_cross_entropy(recons.view(-1), input.view(-1))
+        kld_weight = kwargs['M_N']  # Account for the minibatch samples from the dataset
+        recons_loss = F.mse_loss(recons, input)
 
-        kld_loss = -0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp())
-        kld_loss /= input.view(-1).size(0)
+        kld_loss = torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim=1), dim=0)
 
-        return bce_loss + kld_loss
-
-
+        loss = recons_loss + kld_weight * kld_loss
+        return {'loss': loss, 'Reconstruction Loss': recons_loss, 'KLD': -kld_loss}

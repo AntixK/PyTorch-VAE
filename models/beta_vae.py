@@ -116,11 +116,12 @@ class BetaVAE(BaseVAE):
         return  self.decode(z), mu, log_var
 
     def loss_function(self,
-                      recons: Tensor,
-                      input: Tensor,
-                      mu: Tensor,
-                      log_var: Tensor,
+                      *args,
                       **kwargs) -> dict:
+        recons = args[0]
+        input = args[1]
+        mu = args[2]
+        log_var = args[3]
 
         recons_loss =F.mse_loss(recons, input)
 

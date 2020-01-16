@@ -108,17 +108,18 @@ class VanillaVAE(BaseVAE):
         eps = torch.randn_like(std)
         return eps * std + mu
 
-    def forward(self, input: Tensor) -> Tensor:
+    def forward(self, input: Tensor) -> List[Tensor]:
         mu, log_var = self.encode(input)
         z = self.reparameterize(mu, log_var)
-        return  self.decode(z), mu, log_var
+        return  [self.decode(z), input, mu, log_var]
 
     def loss_function(self,
-                      recons: Tensor,
-                      input: Tensor,
-                      mu: Tensor,
-                      log_var: Tensor,
+                      *args,
                       **kwargs) -> dict:
+        recons = args[0]
+        input = args[1]
+        mu = args[2]
+        log_var = args[3]
 
         kld_weight = kwargs['M_N'] # Account for the minibatch samples from the dataset
         recons_loss =F.mse_loss(recons, input)
