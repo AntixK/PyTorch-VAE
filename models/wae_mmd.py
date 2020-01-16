@@ -100,7 +100,7 @@ class WAE_MMD(BaseVAE):
         result = self.final_layer(result)
         return result
 
-    def forward(self, input: Tensor) -> List[Tensor]:
+    def forward(self, input: Tensor, **kwargs) -> List[Tensor]:
         z = self.encode(input)
         return  [self.decode(z), input, z]
 

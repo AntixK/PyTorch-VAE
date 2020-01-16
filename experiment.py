@@ -1,13 +1,14 @@
-import torch
-import pytorch_lightning as pl
-from models import BaseVAE
-from torchvision import transforms
-from torchvision.datasets import CelebA
-from torch import optim
-from torch.utils.data import DataLoader
-import torchvision.utils as vutils
-from models.types_ import *
 import math
+import torch
+from torch import optim
+from models import BaseVAE
+from models.types_ import *
+import pytorch_lightning as pl
+from torchvision import transforms
+import torchvision.utils as vutils
+from torchvision.datasets import CelebA
+from torch.utils.data import DataLoader
+
 
 
 class VAEXperiment(pl.LightningModule):
@@ -21,14 +22,14 @@ class VAEXperiment(pl.LightningModule):
         self.params = params
         self.curr_device = None
 
-    def forward(self, input: Tensor):
-        return self.model(input)
+    def forward(self, input: Tensor, **kwargs) -> Tensor:
+        return self.model(input, **kwargs)
 
     def training_step(self, batch, batch_idx):
-        real_img, _ = batch
+        real_img, labels = batch
         self.curr_device = real_img.device
 
-        results = self.forward(real_img)
+        results = self.forward(real_img, labels = labels)
 
         train_loss = self.model.loss_function(*results,
                                               M_N = self.params.batch_size/ self.num_train_imgs )
@@ -38,8 +39,8 @@ class VAEXperiment(pl.LightningModule):
         return train_loss
 
     def validation_step(self, batch, batch_idx):
-        real_img, _ = batch
-        results = self.forward(real_img)
+        real_img, labels = batch
+        results = self.forward(real_img, labels = labels)
         val_loss = self.model.loss_function(*results,
                                             M_N = self.params.batch_size/ self.num_train_imgs)
 

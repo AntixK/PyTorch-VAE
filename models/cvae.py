@@ -115,7 +115,8 @@ class ConditionalVAE(BaseVAE):
         eps = torch.randn_like(std)
         return eps * std + mu
 
-    def forward(self, input: Tensor, y: Tensor) -> List[Tensor]:
+    def forward(self, input: Tensor, **kwargs) -> List[Tensor]:
+        y = kwargs['labels']
         embedded_class = self.embed_class(y)
         embedded_class = embedded_class.view(-1, self.img_size, self.img_size).unsqueeze(1)
         embedded_input = self.embed_data(input)
