@@ -142,8 +142,10 @@ class WAE_MMD(BaseVAE):
 
         if self.kernel_type == 'rbf':
             result = self.compute_rbf(x1, x2)
-        else:
+        elif self.kernel_type == 'imq':
             result = self.compute_inv_mult_quad(x1, x2)
+        else:
+            raise ValueError('Undefined kernel type.')
 
         return result
 

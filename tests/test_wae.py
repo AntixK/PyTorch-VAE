@@ -22,8 +22,8 @@ class TestWAE(unittest.TestCase):
     def test_loss(self):
         x = torch.randn(16, 3, 64, 64)
 
-        y, x, z = self.model(x)
-        loss = self.model.loss_function(y, x, z)
+        result = self.model(x)
+        loss = self.model.loss_function(*result)
         print(loss)
 
 

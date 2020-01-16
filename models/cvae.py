@@ -9,16 +9,23 @@ class ConditionalVAE(BaseVAE):
 
     def __init__(self,
                  in_channels: int,
+                 num_classes: int,
                  latent_dim: int,
-                 hidden_dims: List = None) -> None:
+                 hidden_dims: List = None,
+                 img_size:int = 64) -> None:
         super(ConditionalVAE, self).__init__()
 
         self.latent_dim = latent_dim
+        self.img_size = img_size
+
+        self.embed_class = nn.Linear(num_classes, img_size * img_size)
+        self.embed_data = nn.Conv2d(in_channels, in_channels, kernel_size=1)
 
         modules = []
         if hidden_dims is None:
             hidden_dims = [32, 64, 128, 256, 512]
 
+        in_channels += 1 # To account for the extra label channel
         # Build Encoder
         for h_dim in hidden_dims:
             modules.append(
@@ -38,7 +45,7 @@ class ConditionalVAE(BaseVAE):
         # Build Decoder
         modules = []
 
-        self.decoder_input = nn.Linear(latent_dim, hidden_dims[-1] * 4)
+        self.decoder_input = nn.Linear(latent_dim + num_classes, hidden_dims[-1] * 4)
 
         hidden_dims.reverse()
 
@@ -108,23 +115,28 @@ class ConditionalVAE(BaseVAE):
         eps = torch.randn_like(std)
         return eps * std + mu
 
-    def forward(self, input: Tensor, y: Tensor) -> Tensor:
-        input = torch.cat([input, y], dim = 1)
-        mu, log_var = self.encode(input)
+    def forward(self, input: Tensor, y: Tensor) -> List[Tensor]:
+        embedded_class = self.embed_class(y)
+        embedded_class = embedded_class.view(-1, self.img_size, self.img_size).unsqueeze(1)
+        embedded_input = self.embed_data(input)
+
+        x = torch.cat([embedded_input, embedded_class], dim = 1)
+        mu, log_var = self.encode(x)
 
         z = self.reparameterize(mu, log_var)
 
         z = torch.cat([z, y], dim = 1)
-        return  self.decode(z), mu, log_var
+        return  [self.decode(z), input, mu, log_var]
 
     def loss_function(self,
-                      recons: Tensor,
-                      input: Tensor,
-                      mu: Tensor,
-                      log_var: Tensor,
+                      *args,
                       **kwargs) -> dict:
+        recons = args[0]
+        input = args[1]
+        mu = args[2]
+        log_var = args[3]
 
-        kld_weight = kwargs['M_N'] # Account for the minibatch samples from the dataset
+        kld_weight = kwargs['M_N']  # Account for the minibatch samples from the dataset
         recons_loss =F.mse_loss(recons, input)
 
         kld_loss = torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim = 1), dim = 0)
