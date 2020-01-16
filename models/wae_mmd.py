@@ -5,13 +5,13 @@ from torch.nn import functional as F
 from .types_ import *
 
 
-class VanillaVAE(BaseVAE):
+class WAE_MMD(BaseVAE):
 
     def __init__(self,
                  in_channels: int,
                  latent_dim: int,
                  hidden_dims: List = None) -> None:
-        super(VanillaVAE, self).__init__()
+        super(WAE_MMD, self).__init__()
 
         self.latent_dim = latent_dim
 
@@ -120,10 +120,38 @@ class VanillaVAE(BaseVAE):
                       log_var: Tensor,
                       **kwargs) -> dict:
 
-        kld_weight = kwargs['M_N'] # Account for the minibatch samples from the dataset
         recons_loss =F.mse_loss(recons, input)
 
-        kld_loss = torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim = 1), dim = 0)
+        mmd_loss = self.compute_mmd()
 
-        loss = recons_loss + kld_weight * kld_loss
-        return {'loss': loss, 'Reconstruction Loss':recons_loss, 'KLD':-kld_loss}
+        loss = recons_loss + 0.05 * mmd_loss
+        return {'loss': loss, 'Reconstruction Loss':recons_loss, 'MMD': mmd_loss}
+
+    def compute_kernel(self, x1: Tensor, x2: Tensor) -> Tensor:
+        # Convert the tensors into row and column vectors
+        D = x1.size(1)
+        N = x1.size(0)
+
+        x1 = x1.unsqueeze(-2) # Make it into a column tensor
+        x2 = x2.unsqueeze(-3) # Make it into a row tensor
+
+        """
+        Usually this is not required, especially in our case,
+        but this is useful when x1 and x2 have different sizes
+        along the 0th dimension.
+        """
+        x1 = x1.expand(N, N, D)
+        x2 = x1.expand(N, N, D)
+
+        return torch.exp(-((x1 - x2).pow(2).mean(-1) / float(D)))
+
+    def compute_mmd(self, z: Tensor) -> Tensor:
+        # Sample from prior (Gaussian) distribution
+        prior_z = torch.randn_like(z)
+
+        prior_z__kernel = self.compute_kernel(prior_z, prior_z)
+        z__kernel = self.compute_kernel(z, z)
+        priorz_z__kernel = self.compute_kernel(prior_z, z)
+
+        mmd = prior_z__kernel.mean() + z__kernel.mean() - 2*priorz_z__kernel.mean()
+        return mmd

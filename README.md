@@ -1,17 +1,18 @@
 PyTorch-VAE
 
 TODO
-- [ ] VanillaVAE
+- [x] VanillaVAE
 - [ ] Conditional VAE
 - [ ] Gamma VAE
 - [ ] Beta VAE
-- [ ] InfoVAE
-- [ ] WAE
+- [ ] DFC VAE
+- [ ] InfoVAE (MMD-VAE)
+- [ ] WAE-MMD
 - [ ] AAE
 - [ ] TwoStageVAE
-- [ ] MMD-VAE
 - [ ] VAE-GAN
 - [ ] VAE with Vamp Prior
 - [ ] IWAE
 - [ ] VLAE
+- [ ] FactorVAE
 

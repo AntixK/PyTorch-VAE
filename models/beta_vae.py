@@ -5,15 +5,17 @@ from torch.nn import functional as F
 from .types_ import *
 
 
-class VanillaVAE(BaseVAE):
+class BetaVAE(BaseVAE):
 
     def __init__(self,
                  in_channels: int,
                  latent_dim: int,
-                 hidden_dims: List = None) -> None:
-        super(VanillaVAE, self).__init__()
+                 hidden_dims: List = None,
+                 beta: int = 1) -> None:
+        super(BetaVAE, self).__init__()
 
         self.latent_dim = latent_dim
+        self.beta = beta
 
         modules = []
         if hidden_dims is None:
@@ -120,10 +122,9 @@ class VanillaVAE(BaseVAE):
                       log_var: Tensor,
                       **kwargs) -> dict:
 
-        kld_weight = kwargs['M_N'] # Account for the minibatch samples from the dataset
         recons_loss =F.mse_loss(recons, input)
 
         kld_loss = torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim = 1), dim = 0)
 
-        loss = recons_loss + kld_weight * kld_loss
-        return {'loss': loss, 'Reconstruction Loss':recons_loss, 'KLD':-kld_loss}
+        loss = recons_loss + self.beta * kld_loss
+        return {'loss': loss, 'Reconstruction Loss':recons_loss, 'KLD':kld_loss}

@@ -5,13 +5,13 @@ from torch.nn import functional as F
 from .types_ import *
 
 
-class VanillaVAE(BaseVAE):
+class ConditionalVAE(BaseVAE):
 
     def __init__(self,
                  in_channels: int,
                  latent_dim: int,
                  hidden_dims: List = None) -> None:
-        super(VanillaVAE, self).__init__()
+        super(ConditionalVAE, self).__init__()
 
         self.latent_dim = latent_dim
 
@@ -108,9 +108,13 @@ class VanillaVAE(BaseVAE):
         eps = torch.randn_like(std)
         return eps * std + mu
 
-    def forward(self, input: Tensor) -> Tensor:
+    def forward(self, input: Tensor, y: Tensor) -> Tensor:
+        input = torch.cat([input, y], dim = 1)
         mu, log_var = self.encode(input)
+
         z = self.reparameterize(mu, log_var)
+
+        z = torch.cat([z, y], dim = 1)
         return  self.decode(z), mu, log_var
 
     def loss_function(self,

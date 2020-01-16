@@ -1,0 +1,23 @@
+model_params:
+  name: 'VanillaVAE'
+  in_channels: 3
+  latent_dim: 128
+
+data_params:
+  data_path: "../../shared/Data/"
+  img_size: 64
+  batch_size: 144
+
+optimizer_params:
+  LR: 5e-3
+  scheduler_gamma: 0.95
+  gpus: 1
+  num_epochs: 50
+
+logging_params:
+  save_dir: "logs/",
+  name: "VanillaVAE",
+
+
+
+

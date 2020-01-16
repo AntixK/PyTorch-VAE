@@ -1,40 +1,42 @@
+import torch
+from models import VanillaVAE
+from experiment import VAEXperiment
 from pytorch_lightning import Trainer
 from pytorch_lightning.logging import TestTubeLogger
-# from pytorch_lightning.callbacks import ModelCheckpoint
-from trainer import VAETrainer
-from models import VAE
-import torch
 
 
 tt_logger = TestTubeLogger(
     save_dir="logs/",
     name="VanillaVAE",
     debug=False,
-    create_git_tag=False
+    create_git_tag=False,
 )
+
 
 class hparams(object):
     def __init__(self):
-        self.LR = 0.0005
-        self.momentum = 0.9
-        self.scheduler_gamma = 0
+        self.LR = 5e-3
+        self.scheduler_gamma = 0.95
         self.gpus = 1
-        self.data_path = 'data/'
+        self.data_path = "../../shared/Data/"
         self.batch_size = 144
+        self.img_size = 64
         self.manual_seed = 1256
 
 hyper_params = hparams()
-torch.manual_seed(hyper_params.manual_seed)
-model = VAE(in_channels=3, latent_dim=128)
-net = VAETrainer(model,
-                 hyper_params)
+torch.manual_seed = hyper_params.manual_seed
+model = VanillaVAE(in_channels=3, latent_dim=128)
+experiment = VAEXperiment(model,
+                          hyper_params)
 
 
-trainer = Trainer(gpus=hyper_params.gpus,
-                  min_nb_epochs=1,
-                  max_nb_epochs=2,
-                  logger=tt_logger,
-                  log_save_interval=100,
-                  train_percent_check=1.,
-                  val_percent_check=1.)
-trainer.fit(net)
+runner = Trainer(gpus=hyper_params.gpus,
+                 default_save_path=f"{tt_logger.save_dir}",
+                 min_nb_epochs=1,
+                 max_nb_epochs= 50,
+                 logger=tt_logger,
+                 log_save_interval=100,
+                 train_percent_check=1.,
+                 val_percent_check=1.)
+
+runner.fit(experiment)
