@@ -10,7 +10,8 @@ class VanillaVAE(BaseVAE):
     def __init__(self,
                  in_channels: int,
                  latent_dim: int,
-                 hidden_dims: List = None) -> None:
+                 hidden_dims: List = None,
+                 **kwargs) -> None:
         super(VanillaVAE, self).__init__()
 
         self.latent_dim = latent_dim

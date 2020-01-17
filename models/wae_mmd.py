@@ -13,7 +13,8 @@ class WAE_MMD(BaseVAE):
                  hidden_dims: List = None,
                  reg_weight: int = 100,
                  kernel_type: str = 'imq',
-                 latent_var: float = 2.) -> None:
+                 latent_var: float = 2.,
+                 **kwargs) -> None:
         super(WAE_MMD, self).__init__()
 
         self.latent_dim = latent_dim
@@ -133,7 +134,7 @@ class WAE_MMD(BaseVAE):
         x2 = x2.unsqueeze(-3) # Make it into a row tensor
 
         """
-        Usually this is not required, especially in our case,
+        Usually the below lines are not required, especially in our case,
         but this is useful when x1 and x2 have different sizes
         along the 0th dimension.
         """

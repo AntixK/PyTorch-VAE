@@ -1,45 +1,49 @@
-import torch
-from models import VanillaVAE, WAE_MMD, CVAE
+import yaml
+import argparse
+from models import *
 from experiment import VAEXperiment
+import torch.backends.cudnn as cudnn
 from pytorch_lightning import Trainer
 from pytorch_lightning.logging import TestTubeLogger
 
 
+parser = argparse.ArgumentParser(description='Generic runner for VAE models')
+parser.add_argument('--config',  '-c',
+                    dest="filename",
+                    metavar='FILE',
+                    help =  'path to the config file',
+                    default='configs/vae.yaml')
+
+args = parser.parse_args()
+with open(args.filename, 'r') as file:
+    try:
+        config = yaml.safe_load(file)
+    except yaml.YAMLError as exc:
+        print(exc)
+
+
 tt_logger = TestTubeLogger(
-    save_dir="logs/",
-    name="WassersteinVAE",
+    save_dir=config['logging_params']['save_dir'],
+    name=config['logging_params']['name'],
     debug=False,
     create_git_tag=False,
 )
 
-
-class hparams(object):
-    def __init__(self):
-        self.LR = 5e-3
-        self.scheduler_gamma = 0.95
-        self.gpus = 1
-        self.data_path = "../../shared/Data/"
-        self.batch_size = 144
-        self.img_size = 64
-        self.manual_seed = 1256
-
-
-hyper_params = hparams()
-torch.manual_seed = hyper_params.manual_seed
-# model = VanillaVAE(in_channels=3, latent_dim=128)
-# model = CVAE(in_channels=3, latent_dim=128, num_classes=40, img_size=64)
-model = WAE_MMD(in_channels=3, latent_dim=128, reg_weight=100)
+torch.manual_seed = config['logging_params']['manual_seed']
+cudnn.deterministic = True
+model = vae_models[config['model_params']['name']](**config['model_params'])
+# # model = CVAE(in_channels=3, latent_dim=128, num_classes=40, img_size=64)
+# # model = WAE_MMD(in_channels=3, latent_dim=128, reg_weight=100)
 experiment = VAEXperiment(model,
-                          hyper_params)
+                          config['exp_params'])
 
-
-runner = Trainer(gpus=hyper_params.gpus,
-                 default_save_path=f"{tt_logger.save_dir}",
+runner = Trainer(default_save_path=f"{tt_logger.save_dir}",
                  min_nb_epochs=1,
-                 max_nb_epochs= 50,
                  logger=tt_logger,
                  log_save_interval=100,
                  train_percent_check=1.,
-                 val_percent_check=1.)
+                 val_percent_check=1.,
+                 **config['trainer_params'])
 
+print(f"======= Training {config['model_params']['name']} =======")
 runner.fit(experiment)

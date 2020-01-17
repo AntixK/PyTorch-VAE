@@ -32,7 +32,7 @@ class VAEXperiment(pl.LightningModule):
         results = self.forward(real_img, labels = labels)
 
         train_loss = self.model.loss_function(*results,
-                                              M_N = self.params.batch_size/ self.num_train_imgs )
+                                              M_N = self.params['batch_size']/ self.num_train_imgs )
 
         self.logger.experiment.log({key: val.item() for key, val in train_loss.items()})
 
@@ -42,7 +42,7 @@ class VAEXperiment(pl.LightningModule):
         real_img, labels = batch
         results = self.forward(real_img, labels = labels)
         val_loss = self.model.loss_function(*results,
-                                            M_N = self.params.batch_size/ self.num_train_imgs)
+                                            M_N = self.params['batch_size']/ self.num_train_imgs)
 
         return val_loss
 
@@ -53,7 +53,7 @@ class VAEXperiment(pl.LightningModule):
         return {'val_loss': avg_loss, 'log': tensorboard_logs}
 
     def sample_images(self):
-        z = torch.randn(self.params.batch_size,
+        z = torch.randn(self.params['batch_size'],
                         self.model.latent_dim)
 
         if self.on_gpu:
@@ -64,25 +64,33 @@ class VAEXperiment(pl.LightningModule):
         vutils.save_image(samples.data,
                           f"{self.logger.save_dir}/{self.logger.name}/sample_{self.current_epoch}.png",
                           normalize=True,
-                          nrow=int(math.sqrt(self.params.batch_size)))
+                          nrow=int(math.sqrt(self.params['batch_size'])))
+        test_input = next(iter(self.val_dataloader))
+        recons = self.model(test_input)
+
+        vutils.save_image(recons.data,
+                          f"{self.logger.save_dir}/{self.logger.name}/recons_{self.current_epoch}.png",
+                          normalize=True,
+                          nrow=int(math.sqrt(self.params['batch_size'])))
+        del test_input, recons, samples, z
 
 
 
     def configure_optimizers(self):
-        optimizer = optim.Adam(self.model.parameters(), lr=self.params.LR)
-        scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma = self.params.scheduler_gamma) 
+        optimizer = optim.Adam(self.model.parameters(), lr=self.params['LR'])
+        scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma = self.params['scheduler_gamma'])
         return [optimizer] #, [scheduler]
 
     @pl.data_loader
     def train_dataloader(self):
         transform = self.data_transforms()
-        dataset = CelebA(root = self.params.data_path,
+        dataset = CelebA(root = self.params['data_path'],
                          split = "train",
                          transform=transform,
                          download=False)
         self.num_train_imgs = len(dataset)
         return DataLoader(dataset,
-                          batch_size= self.params.batch_size,
+                          batch_size= self.params['batch_size'],
                           shuffle = True,
                           drop_last=True)
 
@@ -90,11 +98,11 @@ class VAEXperiment(pl.LightningModule):
     def val_dataloader(self):
         transform = self.data_transforms()
 
-        return DataLoader(CelebA(root = self.params.data_path,
+        return DataLoader(CelebA(root = self.params['data_path'],
                                  split = "test",
                                  transform=transform,
                                  download=False),
-                          batch_size= self.params.batch_size,
+                          batch_size= self.params['batch_size'],
                           shuffle = True,
                           drop_last=True)
 
@@ -102,7 +110,7 @@ class VAEXperiment(pl.LightningModule):
         SetRange = transforms.Lambda(lambda X: 2 * X - 1.)
         transform = transforms.Compose([transforms.RandomHorizontalFlip(),
                                         transforms.CenterCrop(148),
-                                        transforms.Resize(self.params.img_size),
+                                        transforms.Resize(self.params['img_size']),
                                         transforms.ToTensor(),
                                         SetRange])
         return transform

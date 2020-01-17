@@ -11,7 +11,8 @@ class BetaVAE(BaseVAE):
                  in_channels: int,
                  latent_dim: int,
                  hidden_dims: List = None,
-                 beta: int = 1) -> None:
+                 beta: int = 1,
+                 **kwargs) -> None:
         super(BetaVAE, self).__init__()
 
         self.latent_dim = latent_dim

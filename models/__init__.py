@@ -9,3 +9,9 @@ from .cvae import *
 VAE = VanillaVAE
 GaussianVAE = VanillaVAE
 CVAE = ConditionalVAE
+
+vae_models = {'VanillaVAE':VanillaVAE,
+              'WAE_MMD':WAE_MMD,
+              'ConditionalVAE':ConditionalVAE,
+              'BetaVAE':BetaVAE,
+              'GammaVAE':GammaVAE}

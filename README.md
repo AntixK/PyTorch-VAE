@@ -1,4 +1,12 @@
-PyTorch-VAE
+<p align="center">
+  <b>PyTorch VAE</b><br>
+</p>
+
+| Model | Reconstruction | Samples |
+|-------|----------------|---------|
+|       |                |         |
+|       |                |         |
+|       |                |         |
 
 TODO
 - [x] VanillaVAE
@@ -15,4 +23,5 @@ TODO
 - [ ] IWAE
 - [ ] VLAE
 - [ ] FactorVAE
+- [ ] PixelVAE
 

@@ -1,7 +1,9 @@
 model_params:
-  name: 'VanillaVAE'
+  name: 'WAE_MMD'
   in_channels: 3
   latent_dim: 128
+  reg_weight: 100
+  kernel_type: 'imq'
 
 exp_params:
   data_path: "../../shared/Data/"
@@ -17,5 +19,9 @@ trainer_params:
 
 logging_params:
   save_dir: "logs/"
-  name: "VanillaVAE"
+  name: "WassersteinVAE"
   manual_seed: 1265
+
+
+
+
