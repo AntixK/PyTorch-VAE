@@ -38,32 +38,36 @@ $ python run.py -c configs/<config-file-name.yaml>
 
 | Model                    | Paper                            |Reconstruction | Samples |
 |--------------------------|----------------------------------|---------------|---------|
-|  VAE                     |https://arxiv.org/abs/1312.6114   |               | ![][1]  |
-|  WAE - MMD (RBF Kernel)  |https://arxiv.org/abs/1711.01558  |               | ![][2]  |
-|  WAE - MMD (IMQ Kernel)  |https://arxiv.org/abs/1711.01558  |               | ![][3]  |
+|  VAE                     |https://arxiv.org/abs/1312.6114   |    ![][2]     | ![][1]  |
+|  WAE - MMD (RBF Kernel)  |https://arxiv.org/abs/1711.01558  |               | ![][3]  |
+|  WAE - MMD (IMQ Kernel)  |https://arxiv.org/abs/1711.01558  |               | ![][4]  |
 
 
 
 ### TODO
 - [x] VanillaVAE
-- [ ] Conditional VAE
+- [x] Conditional VAE
 - [ ] Gamma VAE
-- [ ] Beta VAE
+- [x] Beta VAE
 - [ ] DFC VAE
 - [ ] InfoVAE (MMD-VAE)
 - [x] WAE-MMD
 - [ ] AAE
 - [ ] TwoStageVAE
 - [ ] VAE-GAN
-- [ ] VAE with Vamp Prior
+- [x] HVAE (VAE with Vamp Prior)
 - [ ] IWAE
 - [ ] VLAE
 - [ ] FactorVAE
 - [ ] PixelVAE
 
 [1]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/Vanilla%20VAE_25.png
-[2]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/WAE_RBF_17.png
-[3]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/WAE_IMQ_15.png
+[2]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_Vanilla%20VAE_25.png
+[3]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/WAE_RBF_17.png
+[4]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/WAE_IMQ_15.png
+
+
+
 
 [python-image]: https://img.shields.io/badge/Python-3.5-ff69b4.svg
 [python-url]: https://www.python.org/

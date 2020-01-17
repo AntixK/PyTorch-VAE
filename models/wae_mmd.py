@@ -155,9 +155,10 @@ class WAE_MMD(BaseVAE):
                     x1: Tensor,
                     x2: Tensor,
                     eps: float = 1e-7) -> Tensor:
-        D = torch.tensor(x1.size(1))
+        z_dim = x2.size(-1)
+        sigma = 2. * z_dim * self.z_var
 
-        result = torch.exp(-((x1 - x2).pow(2).mean(-1) / D))
+        result = torch.exp(-((x1 - x2).pow(2).mean(-1) / sigma))
         return result
 
     def compute_inv_mult_quad(self,

@@ -10,7 +10,7 @@ class BaseVAE(nn.Module):
     def encode(self, input: Tensor) -> List[Tensor]:
         raise NotImplementedError
 
-    def decode(self, input: Tensor) -> Tensor:
+    def decode(self, input: Tensor) -> Any:
         raise NotImplementedError
 
     @abstractmethod
