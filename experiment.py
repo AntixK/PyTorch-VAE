@@ -65,10 +65,13 @@ class VAEXperiment(pl.LightningModule):
                           f"{self.logger.save_dir}/{self.logger.name}/sample_{self.current_epoch}.png",
                           normalize=True,
                           nrow=int(math.sqrt(self.params['batch_size'])))
-        test_input = next(iter(self.val_dataloader))
+
+        # Get sample reconstruction image
+        test_input, _ = next(iter(self.sample_dataloader))
+        test_input = test_input.cuda(self.curr_device)
         recons = self.model(test_input)
 
-        vutils.save_image(recons.data,
+        vutils.save_image(recons[0].data,
                           f"{self.logger.save_dir}/{self.logger.name}/recons_{self.current_epoch}.png",
                           normalize=True,
                           nrow=int(math.sqrt(self.params['batch_size'])))
@@ -98,13 +101,15 @@ class VAEXperiment(pl.LightningModule):
     def val_dataloader(self):
         transform = self.data_transforms()
 
-        return DataLoader(CelebA(root = self.params['data_path'],
-                                 split = "test",
-                                 transform=transform,
-                                 download=False),
-                          batch_size= self.params['batch_size'],
-                          shuffle = True,
-                          drop_last=True)
+
+        self.sample_dataloader =  DataLoader(CelebA(root = self.params['data_path'],
+                                                    split = "test",
+                                                    transform=transform,
+                                                    download=False),
+                                             batch_size= self.params['batch_size'],
+                                             shuffle = True,
+                                             drop_last=True)
+        return self.sample_dataloader
 
     def data_transforms(self):
         SetRange = transforms.Lambda(lambda X: 2 * X - 1.)
