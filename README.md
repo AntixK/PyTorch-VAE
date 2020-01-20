@@ -36,11 +36,13 @@ $ python run.py -c configs/<config-file-name.yaml>
 
 ----
 
-| Model                    | Paper                            |Reconstruction | Samples |
-|--------------------------|----------------------------------|---------------|---------|
-|  VAE                     |https://arxiv.org/abs/1312.6114   |    ![][2]     | ![][1]  |
-|  WAE - MMD (RBF Kernel)  |https://arxiv.org/abs/1711.01558  |    ![][4]     | ![][3]  |
-|  WAE - MMD (IMQ Kernel)  |https://arxiv.org/abs/1711.01558  |    ![][6]     | ![][5]  |
+| Model                 | Paper                                            |Reconstruction | Samples |
+|-----------------------|--------------------------------------------------|---------------|---------|
+| VAE                   |[Link](https://arxiv.org/abs/1312.6114)           |    ![][2]     | ![][1]  |
+| WAE - MMD (RBF Kernel)|[Link](https://arxiv.org/abs/1711.01558)          |    ![][4]     | ![][3]  |
+| WAE - MMD (IMQ Kernel)|[Link](https://arxiv.org/abs/1711.01558)          |    ![][6]     | ![][5]  |
+| Beta-VAE              |[Link](https://openreview.net/forum?id=Sy2fzU9gl) |    ![][8]     | ![][7]  |
+| Disentangled Beta-VAE |[Link](https://arxiv.org/abs/1804.03599)          |    ![][10]     | ![][9]  |
 
 
 
@@ -55,7 +57,8 @@ $ python run.py -c configs/<config-file-name.yaml>
 - [ ] AAE
 - [ ] TwoStageVAE
 - [ ] VAE-GAN
-- [x] HVAE (VAE with Vamp Prior)
+- [ ] Vamp VAE
+- [ ] HVAE (VAE with Vamp Prior)
 - [ ] IWAE
 - [ ] VLAE
 - [ ] FactorVAE

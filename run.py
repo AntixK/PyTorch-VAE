@@ -32,8 +32,6 @@ tt_logger = TestTubeLogger(
 torch.manual_seed = config['logging_params']['manual_seed']
 cudnn.deterministic = True
 model = vae_models[config['model_params']['name']](**config['model_params'])
-# # model = CVAE(in_channels=3, latent_dim=128, num_classes=40, img_size=64)
-# # model = WAE_MMD(in_channels=3, latent_dim=128, reg_weight=100)
 experiment = VAEXperiment(model,
                           config['exp_params'])
 

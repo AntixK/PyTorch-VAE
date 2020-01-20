@@ -11,10 +11,12 @@ class VampVAE(BaseVAE):
                  in_channels: int,
                  latent_dim: int,
                  hidden_dims: List = None,
+                 num_components: int = 50,
                  **kwargs) -> None:
         super(VampVAE, self).__init__()
 
         self.latent_dim = latent_dim
+        self.num_components = num_components
 
         modules = []
         if hidden_dims is None:
@@ -73,6 +75,10 @@ class VampVAE(BaseVAE):
                                       kernel_size= 3, padding= 1),
                             nn.Tanh())
 
+        self.pseudo_input = torch.eye(self.num_components, requires_grad= False)
+        self.embed_pseudo = nn.Sequential(nn.Linear(self.num_components, 12288),
+                                          nn.Hardtanh(0.0, 1.0)) # 3x64x64 = 12288
+
     def encode(self, input: Tensor) -> List[Tensor]:
         """
         Encodes the input by passing through the encoder network
@@ -112,7 +118,7 @@ class VampVAE(BaseVAE):
     def forward(self, input: Tensor, **kwargs) -> List[Tensor]:
         mu, log_var = self.encode(input)
         z = self.reparameterize(mu, log_var)
-        return  [self.decode(z), input, mu, log_var]
+        return  [self.decode(z), input, mu, log_var, z]
 
     def loss_function(self,
                       *args,
@@ -121,11 +127,42 @@ class VampVAE(BaseVAE):
         input = args[1]
         mu = args[2]
         log_var = args[3]
+        z = args[4]
 
         kld_weight = kwargs['M_N'] # Account for the minibatch samples from the dataset
         recons_loss =F.mse_loss(recons, input)
 
-        kld_loss = torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim = 1), dim = 0)
+        E_log_q_z = torch.mean(torch.sum(-0.5 * (log_var + (z - mu) ** 2)/ log_var.exp(),
+                                         dim = 1),
+                               dim = 0)
+
+        # Original Prior
+        # E_log_p_z = torch.mean(torch.sum(-0.5 * (z ** 2), dim = 1), dim = 0)
+
+        # Vamp Prior
+        M, C, H, W = input.size()
+        curr_device = input.device
+        self.pseudo_input = self.pseudo_input.cuda(curr_device)
+        x = self.embed_pseudo(self.pseudo_input)
+        x = x.view(-1, C, H, W)
+        prior_mu, prior_log_var = self.encode(x)
+
+        z_expand = z.unsqueeze(1)
+        prior_mu = prior_mu.unsqueeze(0)
+        prior_log_var = prior_log_var.unsqueeze(0)
+
+        E_log_p_z = torch.sum(-0.5 *
+                              (prior_log_var + (z_expand - prior_mu) ** 2)/ prior_log_var.exp(),
+                              dim = 2) - torch.log(torch.tensor(self.num_components).float())
+
+                               # dim = 0)
+        E_log_p_z = torch.logsumexp(E_log_p_z, dim = 1)
+        E_log_p_z = torch.mean(E_log_p_z, dim = 0)
+
+        # KLD = E_q log q - E_q log p
+        kld_loss = -(E_log_p_z - E_log_q_z)
+        # print(E_log_p_z, E_log_q_z)
+
 
         loss = recons_loss + kld_weight * kld_loss
         return {'loss': loss, 'Reconstruction Loss':recons_loss, 'KLD':-kld_loss}
@@ -134,8 +171,7 @@ class VampVAE(BaseVAE):
         z = torch.randn(batch_size,
                         self.latent_dim)
 
-        if self.on_gpu:
-            z = z.cuda(current_device)
+        z = z.cuda(current_device)
 
-        samples = self.model.decode(z)
+        samples = self.decode(z)
         return samples

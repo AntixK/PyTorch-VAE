@@ -5,28 +5,23 @@ from torch.nn import functional as F
 from .types_ import *
 
 
-class ConditionalVAE(BaseVAE):
+class IWAE(BaseVAE):
 
     def __init__(self,
                  in_channels: int,
-                 num_classes: int,
                  latent_dim: int,
                  hidden_dims: List = None,
-                 img_size:int = 64,
+                 num_samples: int = 5,
                  **kwargs) -> None:
-        super(ConditionalVAE, self).__init__()
+        super(IWAE, self).__init__()
 
         self.latent_dim = latent_dim
-        self.img_size = img_size
-
-        self.embed_class = nn.Linear(num_classes, img_size * img_size)
-        self.embed_data = nn.Conv2d(in_channels, in_channels, kernel_size=1)
+        self.num_samples = num_samples
 
         modules = []
         if hidden_dims is None:
             hidden_dims = [32, 64, 128, 256, 512]
 
-        in_channels += 1 # To account for the extra label channel
         # Build Encoder
         for h_dim in hidden_dims:
             modules.append(
@@ -46,7 +41,7 @@ class ConditionalVAE(BaseVAE):
         # Build Decoder
         modules = []
 
-        self.decoder_input = nn.Linear(latent_dim + num_classes, hidden_dims[-1] * 4)
+        self.decoder_input = nn.Linear(latent_dim, hidden_dims[-1] * 4)
 
         hidden_dims.reverse()
 
@@ -117,34 +112,42 @@ class ConditionalVAE(BaseVAE):
         return eps * std + mu
 
     def forward(self, input: Tensor, **kwargs) -> List[Tensor]:
-        y = kwargs['labels']
-        embedded_class = self.embed_class(y)
-        embedded_class = embedded_class.view(-1, self.img_size, self.img_size).unsqueeze(1)
-        embedded_input = self.embed_data(input)
-
-        x = torch.cat([embedded_input, embedded_class], dim = 1)
-        mu, log_var = self.encode(x)
-
+        mu, log_var = self.encode(input)
         z = self.reparameterize(mu, log_var)
-
-        z = torch.cat([z, y], dim = 1)
-        return  [self.decode(z), input, mu, log_var]
+        return  [self.decode(z), input, mu, log_var, z]
 
     def loss_function(self,
                       *args,
                       **kwargs) -> dict:
+        """
+        KL(N(\mu, \sigma), N(0, 1)) = \log \frac{1}{\sigma} + \frac{\sigma^2 + \mu^2}{2} - \frac{1}{2}
+        :param args:
+        :param kwargs:
+        :return:
+        """
         recons = args[0]
         input = args[1]
         mu = args[2]
         log_var = args[3]
+        z = args[4]
 
-        kld_weight = kwargs['M_N']  # Account for the minibatch samples from the dataset
-        recons_loss =F.mse_loss(recons, input)
+        kld_weight = kwargs['M_N'] # Account for the minibatch samples from the dataset
 
-        kld_loss = torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim = 1), dim = 0)
+        recons_loss = ((recons - input) ** 2).flatten(1).mean(-1)
 
-        loss = recons_loss + kld_weight * kld_loss
-        return {'loss': loss, 'Reconstruction Loss':recons_loss, 'KLD':-kld_loss}
+        E_log_q_z = torch.sum(-0.5 * (log_var + (z - mu) ** 2)/ log_var.exp(),
+                              dim = 1)
+        E_log_p_z = torch.sum(-0.5 * (z ** 2), dim = 1)
+
+        # Get importance weights
+        log_weight = (recons_loss + E_log_q_z - E_log_p_z).detach().data
+        weight = F.softmax(log_weight, dim = 0)
+
+        kld_loss = torch.mean(E_log_q_z - E_log_p_z, dim = 0) #torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim = 1), dim = 0)
+
+        loss = torch.sum(weight * (recons_loss + kld_weight * kld_loss), dim = 0)
+
+        return {'loss': loss, 'Reconstruction Loss':recons_loss.mean(0), 'KLD':-kld_loss}
 
     def sample(self, batch_size:int, current_device: int) -> Tensor:
         z = torch.randn(batch_size,

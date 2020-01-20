@@ -6,6 +6,7 @@ from .wae_mmd import *
 from .cvae import *
 from .hvae import *
 from .vampvae import *
+from .iwae import *
 
 # Aliases
 VAE = VanillaVAE
@@ -17,4 +18,6 @@ vae_models = {'VanillaVAE':VanillaVAE,
               'ConditionalVAE':ConditionalVAE,
               'BetaVAE':BetaVAE,
               'GammaVAE':GammaVAE,
-              'HVAE':HVAE}
+              'HVAE':HVAE,
+              'VampVAE':VampVAE,
+              'IWAE':IWAE}

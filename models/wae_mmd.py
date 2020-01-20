@@ -201,8 +201,7 @@ class WAE_MMD(BaseVAE):
         z = torch.randn(batch_size,
                         self.latent_dim)
 
-        if self.on_gpu:
-            z = z.cuda(current_device)
+        z = z.cuda(current_device)
 
-        samples = self.model.decode(z)
+        samples = self.decode(z)
         return samples

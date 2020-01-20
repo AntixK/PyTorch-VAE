@@ -7,16 +7,26 @@ from .types_ import *
 
 class BetaVAE(BaseVAE):
 
+    num_iter = 0 # Global static variable to keep track of iterations
+
     def __init__(self,
                  in_channels: int,
                  latent_dim: int,
                  hidden_dims: List = None,
-                 beta: int = 1,
+                 beta: int = 4,
+                 gamma:float = 1000.,
+                 max_capacity: int = 25,
+                 Capacity_max_iter: int = 1e5,
+                 loss_type:str = 'B',
                  **kwargs) -> None:
         super(BetaVAE, self).__init__()
 
         self.latent_dim = latent_dim
         self.beta = beta
+        self.gamma = gamma
+        self.loss_type = loss_type
+        self.C_max = torch.FloatTensor(max_capacity)
+        self.C_stop_iter = Capacity_max_iter
 
         modules = []
         if hidden_dims is None:
@@ -114,29 +124,38 @@ class BetaVAE(BaseVAE):
     def forward(self, input: Tensor, **kwargs) -> Tensor:
         mu, log_var = self.encode(input)
         z = self.reparameterize(mu, log_var)
-        return  self.decode(z), mu, log_var
+        return  [self.decode(z), input, mu, log_var]
 
     def loss_function(self,
                       *args,
                       **kwargs) -> dict:
+        self.num_iter += 1
         recons = args[0]
         input = args[1]
         mu = args[2]
         log_var = args[3]
+        kld_weight = kwargs['M_N']  # Account for the minibatch samples from the dataset
 
         recons_loss =F.mse_loss(recons, input)
 
         kld_loss = torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim = 1), dim = 0)
 
-        loss = recons_loss + self.beta * kld_loss
+        if self.loss_type == 'B':
+            loss = recons_loss + self.beta * kld_weight * kld_loss
+        elif self.loss_type == 'H':
+            self.C_max = self.C_max.cuda(input.device)
+            C = torch.clamp(self.C_max/self.C_stop_iter * self.num_iter, 0, self.C_max.data[0])
+            loss = recons_loss + self.gamma * kld_weight* (kld_loss - C).abs()
+        else:
+            raise ValueError('Undefined loss type.')
+
         return {'loss': loss, 'Reconstruction Loss':recons_loss, 'KLD':kld_loss}
 
     def sample(self, batch_size:int, current_device: int) -> Tensor:
         z = torch.randn(batch_size,
                         self.latent_dim)
 
-        if self.on_gpu:
-            z = z.cuda(current_device)
+        z = z.cuda(current_device)
 
-        samples = self.model.decode(z)
+        samples = self.decode(z)
         return samples

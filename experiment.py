@@ -55,7 +55,7 @@ class VAEXperiment(pl.LightningModule):
         return {'val_loss': avg_loss, 'log': tensorboard_logs}
 
     def sample_images(self):
-        # # samples = self.model.sample(self.params['batch_size'], self.curr_device).cpu()
+        samples = self.model.sample(self.params['batch_size'], self.curr_device).cpu()
         # z = torch.randn(self.params['batch_size'],
         #                 self.model.latent_dim)
         #
@@ -64,10 +64,10 @@ class VAEXperiment(pl.LightningModule):
         #
         # samples = self.model.decode(z).cpu()
         #
-        # vutils.save_image(samples.data,
-        #                   f"{self.logger.save_dir}/{self.logger.name}/sample_{self.current_epoch}.png",
-        #                   normalize=True,
-        #                   nrow=int(math.sqrt(self.params['batch_size'])))
+        vutils.save_image(samples.data,
+                          f"{self.logger.save_dir}/{self.logger.name}/sample_{self.current_epoch}.png",
+                          normalize=True,
+                          nrow=int(math.sqrt(self.params['batch_size'])))
 
         # Get sample reconstruction image
         test_input, _ = next(iter(self.sample_dataloader))
@@ -78,7 +78,7 @@ class VAEXperiment(pl.LightningModule):
                           f"{self.logger.save_dir}/{self.logger.name}/recons_{self.current_epoch}.png",
                           normalize=True,
                           nrow=int(math.sqrt(self.params['batch_size'])))
-        del test_input, recons #, samples, z
+        del test_input, recons, samples #, samples, z
 
 
 
