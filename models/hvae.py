@@ -105,12 +105,12 @@ class HVAE(BaseVAE):
 
         # ========================================================================#
         # Pesudo Input for the Vamp-Prior
-        self.pseudo_input =  torch.eye(pseudo_input_size,
-                                       requires_grad=False).view(1, 1, pseudo_input_size, -1)
-
-
-        self.pseudo_layer = nn.Conv2d(1, out_channels=in_channels,
-                                     kernel_size=3, stride=2, padding=1)
+        # self.pseudo_input =  torch.eye(pseudo_input_size,
+        #                                requires_grad=False).view(1, 1, pseudo_input_size, -1)
+        #
+        #
+        # self.pseudo_layer = nn.Conv2d(1, out_channels=in_channels,
+        #                              kernel_size=3, stride=2, padding=1)
 
     def encode_z2(self, input: Tensor) -> List[Tensor]:
         """
@@ -209,9 +209,6 @@ class HVAE(BaseVAE):
         z1_p_mu = self.recons_z1_mu(z2)
         z1_p_log_var = self.recons_z1_log_var(z2)
 
-        # Compute the z2 for the pseudo_inputs
-        x = self.pseudo_layer(self.pseudo_input)
-        z2_p_mu, z2_p_log_var = self.encode_z2(x)
 
         kld_weight = kwargs['M_N'] # Account for the minibatch samples from the dataset
         recons_loss =F.mse_loss(recons, input)
@@ -225,13 +222,29 @@ class HVAE(BaseVAE):
                                                dim = 1),
                             dim = 0)
 
-        z2_p_kld = -0.5 * torch.sum(1 + z2_p_log_var - (z2 - z2_p_mu) ** 2 - z2_p_log_var.exp(),
-                                    dim = 1)
+        z2_p_kld = torch.mean(-0.5*(z2**2), dim = 0)
 
-        z2_p_kld = torch.logsumexp(z2_p_kld, dim=0)
-        # z2_p_kld = torch.mean(z2_p_kld, dim = 0)
+        kld_loss = -(z1_p_kld - z1_kld - z2_kld)
+        loss = recons_loss + kld_weight * kld_loss
         # print(z2_p_kld)
 
-        kld_loss = -(z1_p_kld + z2_p_kld - z1_kld - z2_kld)
-        loss = recons_loss + kld_weight * kld_loss
         return {'loss': loss, 'Reconstruction Loss':recons_loss, 'KLD':-kld_loss}
+
+    def sample(self, batch_size:int, current_device: int) -> Tensor:
+        z2 = torch.randn(batch_size,
+                         self.latent2_dim)
+
+        z2 = z2.cuda(current_device)
+
+        z1_mu = self.recons_z1_mu(z2)
+        z1_log_var = self.recons_z1_log_var(z2)
+        z1 = self.reparameterize(z1_mu, z1_log_var)
+
+        debedded_z1 = self.debed_z1_code(z1)
+        debedded_z2 = self.debed_z2_code(z2)
+
+        result = torch.cat([debedded_z1, debedded_z2], dim=1)
+        result = result.view(-1, 512, 2, 2)
+        samples = self.decode(result)
+
+        return samples

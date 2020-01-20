@@ -5,6 +5,7 @@ from .beta_vae import *
 from .wae_mmd import *
 from .cvae import *
 from .hvae import *
+from .vampvae import *
 
 # Aliases
 VAE = VanillaVAE

@@ -130,3 +130,13 @@ class BetaVAE(BaseVAE):
 
         loss = recons_loss + self.beta * kld_loss
         return {'loss': loss, 'Reconstruction Loss':recons_loss, 'KLD':kld_loss}
+
+    def sample(self, batch_size:int, current_device: int) -> Tensor:
+        z = torch.randn(batch_size,
+                        self.latent_dim)
+
+        if self.on_gpu:
+            z = z.cuda(current_device)
+
+        samples = self.model.decode(z)
+        return samples

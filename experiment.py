@@ -40,6 +40,8 @@ class VAEXperiment(pl.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         real_img, labels = batch
+        self.curr_device = real_img.device
+
         results = self.forward(real_img, labels = labels)
         val_loss = self.model.loss_function(*results,
                                             M_N = self.params['batch_size']/ self.num_train_imgs)
@@ -53,18 +55,19 @@ class VAEXperiment(pl.LightningModule):
         return {'val_loss': avg_loss, 'log': tensorboard_logs}
 
     def sample_images(self):
-        z = torch.randn(self.params['batch_size'],
-                        self.model.latent_dim)
-
-        if self.on_gpu:
-            z = z.cuda(self.curr_device)
-
-        samples = self.model.decode(z).cpu()
-
-        vutils.save_image(samples.data,
-                          f"{self.logger.save_dir}/{self.logger.name}/sample_{self.current_epoch}.png",
-                          normalize=True,
-                          nrow=int(math.sqrt(self.params['batch_size'])))
+        # # samples = self.model.sample(self.params['batch_size'], self.curr_device).cpu()
+        # z = torch.randn(self.params['batch_size'],
+        #                 self.model.latent_dim)
+        #
+        # if self.on_gpu:
+        #     z = z.cuda(self.curr_device)
+        #
+        # samples = self.model.decode(z).cpu()
+        #
+        # vutils.save_image(samples.data,
+        #                   f"{self.logger.save_dir}/{self.logger.name}/sample_{self.current_epoch}.png",
+        #                   normalize=True,
+        #                   nrow=int(math.sqrt(self.params['batch_size'])))
 
         # Get sample reconstruction image
         test_input, _ = next(iter(self.sample_dataloader))
@@ -75,7 +78,7 @@ class VAEXperiment(pl.LightningModule):
                           f"{self.logger.save_dir}/{self.logger.name}/recons_{self.current_epoch}.png",
                           normalize=True,
                           nrow=int(math.sqrt(self.params['batch_size'])))
-        del test_input, recons, samples, z
+        del test_input, recons #, samples, z
 
 
 
