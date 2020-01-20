@@ -56,14 +56,6 @@ class VAEXperiment(pl.LightningModule):
 
     def sample_images(self):
         samples = self.model.sample(self.params['batch_size'], self.curr_device).cpu()
-        # z = torch.randn(self.params['batch_size'],
-        #                 self.model.latent_dim)
-        #
-        # if self.on_gpu:
-        #     z = z.cuda(self.curr_device)
-        #
-        # samples = self.model.decode(z).cpu()
-        #
         vutils.save_image(samples.data,
                           f"{self.logger.save_dir}/{self.logger.name}/sample_{self.current_epoch}.png",
                           normalize=True,

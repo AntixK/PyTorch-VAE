@@ -25,7 +25,7 @@ class BetaVAE(BaseVAE):
         self.beta = beta
         self.gamma = gamma
         self.loss_type = loss_type
-        self.C_max = torch.FloatTensor(max_capacity)
+        self.C_max = torch.Tensor([max_capacity])
         self.C_stop_iter = Capacity_max_iter
 
         modules = []
