@@ -3,6 +3,7 @@ from models import BaseVAE
 from torch import nn
 from torch.nn import functional as F
 from .types_ import *
+import numpy as np
 
 
 class IWAE(BaseVAE):
@@ -113,8 +114,9 @@ class IWAE(BaseVAE):
 
     def forward(self, input: Tensor, **kwargs) -> List[Tensor]:
         mu, log_var = self.encode(input)
-        z = self.reparameterize(mu, log_var)
-        return  [self.decode(z), input, mu, log_var, z]
+        z= self.reparameterize(mu, log_var)
+        eps = (z - mu) / log_var
+        return  [self.decode(z), input, mu, log_var, z, eps]
 
     def loss_function(self,
                       *args,
@@ -130,17 +132,18 @@ class IWAE(BaseVAE):
         mu = args[2]
         log_var = args[3]
         z = args[4]
+        eps = args[5]
 
         kld_weight = kwargs['M_N'] # Account for the minibatch samples from the dataset
 
-        recons_loss = ((recons - input) ** 2).flatten(1).mean(-1)
+        log_p_x_z = ((recons - input) ** 2).flatten(1).mean(-1)
+        pi = torch.tensor(np.pi, dtype=torch.float)
+        E_log_q_z = torch.sum(-0.5 * (eps ** 2) - 0.5 * torch.log(2 * pi) - log_var, dim = 1)
 
-        E_log_q_z = torch.sum(-0.5 * (log_var + (z - mu) ** 2)/ log_var.exp(),
-                              dim = 1)
-        E_log_p_z = torch.sum(-0.5 * (z ** 2), dim = 1)
+        E_log_p_z = torch.sum(-0.5 * (z ** 2) - 0.5 * torch.log(2 * pi), dim = 1)
 
         # Get importance weights
-        log_weight = (recons_loss + E_log_q_z - E_log_p_z).detach().data
+        log_weight = (recons_loss + E_log_p_z - E_log_q_z).detach().data
         weight = F.softmax(log_weight, dim = 0)
 
         kld_loss = torch.mean(E_log_q_z - E_log_p_z, dim = 0) #torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim = 1), dim = 0)
