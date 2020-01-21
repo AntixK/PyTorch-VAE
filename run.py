@@ -41,6 +41,7 @@ runner = Trainer(default_save_path=f"{tt_logger.save_dir}",
                  log_save_interval=100,
                  train_percent_check=1.,
                  val_percent_check=1.,
+                 early_stop_callback = False,
                  **config['trainer_params'])
 
 print(f"======= Training {config['model_params']['name']} =======")

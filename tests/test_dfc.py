@@ -1,6 +1,6 @@
 import torch
 import unittest
-from models import IWAE
+from models import DFCVAE
 from torchsummary import summary
 
 
@@ -8,7 +8,7 @@ class TestIWAE(unittest.TestCase):
 
     def setUp(self) -> None:
         # self.model2 = VAE(3, 10)
-        self.model = IWAE(3, 10)
+        self.model = DFCVAE(3, 10)
 
     def test_summary(self):
         print(summary(self.model, (3, 64, 64), device='cpu'))

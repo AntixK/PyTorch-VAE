@@ -91,7 +91,6 @@ class WAE_MMD(BaseVAE):
         # Split the result into mu and var components
         # of the latent Gaussian distribution
         z = self.fc_z(result)
-
         return z
 
     def decode(self, z: Tensor) -> Tensor:
@@ -155,6 +154,13 @@ class WAE_MMD(BaseVAE):
                     x1: Tensor,
                     x2: Tensor,
                     eps: float = 1e-7) -> Tensor:
+        """
+        Computes the RBF Kernel between x1 and x2.
+        :param x1: (Tensor)
+        :param x2: (Tensor)
+        :param eps: (Float)
+        :return:
+        """
         z_dim = x2.size(-1)
         sigma = 2. * z_dim * self.z_var
 
@@ -172,7 +178,7 @@ class WAE_MMD(BaseVAE):
                 k(x_1, x_2) = \sum \frac{C}{C + \|x_1 - x_2 \|^2}
         :param x1: (Tensor)
         :param x2: (Tensor)
-        :param eps:
+        :param eps: (Float)
         :return:
         """
         z_dim = x2.size(-1)
@@ -197,11 +203,29 @@ class WAE_MMD(BaseVAE):
               2 * reg_weight * priorz_z__kernel.mean()
         return mmd
 
-    def sample(self, batch_size:int, current_device: int) -> Tensor:
-        z = torch.randn(batch_size,
+    def sample(self,
+               num_samples:int,
+               current_device: int) -> Tensor:
+        """
+        Samples from the latent space and return the corresponding
+        image space map.
+        :param num_samples: (Int) Number of samples
+        :param current_device: (Int) Device to run the model
+        :return: (Tensor)
+        """
+        z = torch.randn(num_samples,
                         self.latent_dim)
 
         z = z.cuda(current_device)
 
         samples = self.decode(z)
         return samples
+
+    def generate(self, x: Tensor) -> Tensor:
+        """
+        Given an input image x, returns the reconstructed image
+        :param x: (Tensor) [B x C x H x W]
+        :return: (Tensor) [B x C x H x W]
+        """
+
+        return self.forward(x)[0]

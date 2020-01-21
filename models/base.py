@@ -16,6 +16,9 @@ class BaseVAE(nn.Module):
     def sample(self, batch_size:int, current_device: int) -> Tensor:
         raise NotImplementedError
 
+    def generate(self, x: Tensor) -> Tensor:
+        raise NotImplementedError
+
     @abstractmethod
     def forward(self, *inputs: Tensor) -> Tensor:
         pass

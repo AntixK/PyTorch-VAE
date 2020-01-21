@@ -248,3 +248,12 @@ class HVAE(BaseVAE):
         samples = self.decode(result)
 
         return samples
+
+    def generate(self, x: Tensor) -> Tensor:
+        """
+        Given an input image x, returns the reconstructed image
+        :param x: (Tensor) [B x C x H x W]
+        :return: (Tensor) [B x C x H x W]
+        """
+
+        return self.forward(x)[0]

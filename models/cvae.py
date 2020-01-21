@@ -146,11 +146,29 @@ class ConditionalVAE(BaseVAE):
         loss = recons_loss + kld_weight * kld_loss
         return {'loss': loss, 'Reconstruction Loss':recons_loss, 'KLD':-kld_loss}
 
-    def sample(self, batch_size:int, current_device: int) -> Tensor:
-        z = torch.randn(batch_size,
+    def sample(self,
+               num_samples:int,
+               current_device: int) -> Tensor:
+        """
+        Samples from the latent space and return the corresponding
+        image space map.
+        :param num_samples: (Int) Number of samples
+        :param current_device: (Int) Device to run the model
+        :return: (Tensor)
+        """
+        z = torch.randn(num_samples,
                         self.latent_dim)
 
         z = z.cuda(current_device)
 
         samples = self.decode(z)
         return samples
+
+    def generate(self, x: Tensor) -> Tensor:
+        """
+        Given an input image x, returns the reconstructed image
+        :param x: (Tensor) [B x C x H x W]
+        :return: (Tensor) [B x C x H x W]
+        """
+
+        return self.forward(x)[0]

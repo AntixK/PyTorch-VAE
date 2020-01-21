@@ -14,7 +14,8 @@
 
 </p>
 
-A Collection of Variational AutoEncoders (VAEs) implemented in PyTorch.
+A Collection of Variational AutoEncoders (VAEs) implemented in PyTorch with focus on reproducibility. The aim of this project is to provide
+a quick and simple working example for many of the cool VAE models out there.
 
 ### Requirements
 - Python >= 3.5
@@ -43,13 +44,13 @@ $ python run.py -c configs/<config-file-name.yaml>
 | WAE - MMD (IMQ Kernel)|[Link](https://arxiv.org/abs/1711.01558)          |    ![][6]     | ![][5]  |
 | Beta-VAE              |[Link](https://openreview.net/forum?id=Sy2fzU9gl) |    ![][8]     | ![][7]  |
 <!--| Disentangled Beta-VAE |[Link](https://arxiv.org/abs/1804.03599)          |    ![][10]     | ![][9] |-->
-<!--| Importance Weighted AE|[Link](https://arxiv.org/abs/1804.03599)          |    ![][10]     | ![][9] | -->
+| IWAE (5 Samples)      |[Link](https://arxiv.org/abs/1804.03599)          |    ![][10]     | ![][9] |
 
 
 
 ### TODO
 - [x] VanillaVAE
-- [x] Conditional VAE
+- [ ] Conditional VAE
 - [ ] Gamma VAE
 - [x] Beta VAE
 - [ ] DFC VAE
@@ -60,10 +61,15 @@ $ python run.py -c configs/<config-file-name.yaml>
 - [ ] VAE-GAN
 - [ ] Vamp VAE
 - [ ] HVAE (VAE with Vamp Prior)
-- [ ] IWAE
+- [x] IWAE
 - [ ] VLAE
 - [ ] FactorVAE
 - [ ] PixelVAE
+
+### Contributing
+If you have trained a better model using these implementations by finetuning the hyper-params in the config file,
+I would be happy to include your result (along with your config file) in this repo, citing your name &#1F607	.
+
 
 [1]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/Vanilla%20VAE_25.png
 [2]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_Vanilla%20VAE_25.png
@@ -73,7 +79,8 @@ $ python run.py -c configs/<config-file-name.yaml>
 [6]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_WAE_IMQ_15.png
 [7]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/BetaVAE_B_20.png
 [8]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_BetaVAE_B_20.png
-
+[9]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/IWAE_20.png
+[10]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_IWAE_20.png
 
 
 [python-image]: https://img.shields.io/badge/Python-3.5-ff69b4.svg

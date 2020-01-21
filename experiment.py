@@ -64,14 +64,12 @@ class VAEXperiment(pl.LightningModule):
         # Get sample reconstruction image
         test_input, _ = next(iter(self.sample_dataloader))
         test_input = test_input.cuda(self.curr_device)
-        recons = self.model(test_input)
-
-        vutils.save_image(recons[0].data,
+        recons = self.model.generate(test_input)
+        vutils.save_image(recons.data,
                           f"{self.logger.save_dir}/{self.logger.name}/recons_{self.current_epoch}.png",
                           normalize=True,
                           nrow=int(math.sqrt(self.params['batch_size'])))
         del test_input, recons, samples #, samples, z
-
 
 
     def configure_optimizers(self):
