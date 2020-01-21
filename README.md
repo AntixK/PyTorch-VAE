@@ -15,7 +15,9 @@
 </p>
 
 A Collection of Variational AutoEncoders (VAEs) implemented in PyTorch with focus on reproducibility. The aim of this project is to provide
-a quick and simple working example for many of the cool VAE models out there.
+a quick and simple working example for many of the cool VAE models out there. All the models are trained on the [CelebA dataset](http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html)
+for consistency and comparison. The architecture of all the models are kept as similar as possible with the same layers, except for cases where the 
+original paper demands a radically different architecture.
 
 ### Requirements
 - Python >= 3.5
@@ -34,6 +36,29 @@ $ pip install -r requirements.txt
 $ cd PyTorch-VAE
 $ python run.py -c configs/<config-file-name.yaml>
 ```
+Config file template
+```yaml
+model_params:
+  name: "<name of VAE model>"
+  in_channels: 3
+  latent_dim: 
+
+exp_params:
+  data_path: "<path to the celebA dataset>"
+  img_size: 64    # Models are designed to work for this size
+  batch_size: 64  # Better to have a square number
+  LR: 0.005
+
+trainer_params:
+  gpus: 1         
+  max_nb_epochs: 50
+
+logging_params:
+  save_dir: "logs/"
+  name: "<experiment name>"
+  manual_seed: 
+```
+
 
 ----
 
@@ -43,8 +68,10 @@ $ python run.py -c configs/<config-file-name.yaml>
 | WAE - MMD (RBF Kernel)|[Link](https://arxiv.org/abs/1711.01558)          |    ![][4]     | ![][3]  |
 | WAE - MMD (IMQ Kernel)|[Link](https://arxiv.org/abs/1711.01558)          |    ![][6]     | ![][5]  |
 | Beta-VAE              |[Link](https://openreview.net/forum?id=Sy2fzU9gl) |    ![][8]     | ![][7]  |
+| IWAE (5 Samples)      |[Link](https://arxiv.org/abs/1804.03599)          |    ![][10]    | ![][9]  |
+| DFCVAE                |[Link](https://arxiv.org/abs/1610.00291)          |    ![][12]    | ![][11] |
+
 <!--| Disentangled Beta-VAE |[Link](https://arxiv.org/abs/1804.03599)          |    ![][10]     | ![][9] |-->
-| IWAE (5 Samples)      |[Link](https://arxiv.org/abs/1804.03599)          |    ![][10]     | ![][9] |
 
 
 
@@ -53,7 +80,7 @@ $ python run.py -c configs/<config-file-name.yaml>
 - [ ] Conditional VAE
 - [ ] Gamma VAE
 - [x] Beta VAE
-- [ ] DFC VAE
+- [x] DFC VAE
 - [ ] InfoVAE (MMD-VAE)
 - [x] WAE-MMD
 - [ ] AAE
@@ -65,6 +92,7 @@ $ python run.py -c configs/<config-file-name.yaml>
 - [ ] VLAE
 - [ ] FactorVAE
 - [ ] PixelVAE
+- [ ] VQVAE
 
 ### Contributing
 If you have trained a better model using these implementations by finetuning the hyper-params in the config file,
@@ -79,8 +107,10 @@ I would be happy to include your result (along with your config file) in this re
 [6]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_WAE_IMQ_15.png
 [7]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/BetaVAE_B_20.png
 [8]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_BetaVAE_B_20.png
-[9]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/IWAE_20.png
-[10]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_IWAE_20.png
+[9]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/IWAE_9.png
+[10]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_IWAE_9.png
+[11]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/DFCVAE_20.png
+[12]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_DFCVAE_20.png
 
 
 [python-image]: https://img.shields.io/badge/Python-3.5-ff69b4.svg
