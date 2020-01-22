@@ -12,12 +12,14 @@ class TestIWAE(unittest.TestCase):
 
     def test_summary(self):
         print(summary(self.model, (3, 64, 64), device='cpu'))
+
         # print(summary(self.model2, (3, 64, 64), device='cpu'))
 
     def test_forward(self):
         x = torch.randn(16, 3, 64, 64)
         y = self.model(x)
         print("Model Output size:", y[0].size())
+
         # print("Model2 Output size:", self.model2(x)[0].size())
 
     def test_loss(self):
@@ -30,6 +32,8 @@ class TestIWAE(unittest.TestCase):
     def test_sample(self):
         self.model.cuda()
         y = self.model.sample(144, 0)
+
+
 
 
 if __name__ == '__main__':

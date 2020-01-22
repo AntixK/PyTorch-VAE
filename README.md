@@ -80,6 +80,7 @@ logging_params:
 - [ ] Conditional VAE
 - [ ] Gamma VAE
 - [x] Beta VAE
+- [ ] Beta TC-VAE
 - [x] DFC VAE
 - [ ] InfoVAE (MMD-VAE)
 - [x] WAE-MMD
@@ -93,6 +94,7 @@ logging_params:
 - [ ] FactorVAE
 - [ ] PixelVAE
 - [ ] VQVAE
+- [ ] StyleVAE
 
 ### Contributing
 If you have trained a better model using these implementations by finetuning the hyper-params in the config file,
@@ -107,10 +109,10 @@ I would be happy to include your result (along with your config file) in this re
 [6]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_WAE_IMQ_15.png
 [7]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/BetaVAE_B_20.png
 [8]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_BetaVAE_B_20.png
-[9]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/IWAE_9.png
-[10]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_IWAE_9.png
-[11]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/DFCVAE_20.png
-[12]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_DFCVAE_20.png
+[9]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/IWAE_19.png
+[10]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_IWAE_19.png
+[11]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/DFCVAE_49.png
+[12]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_DFCVAE_40.png
 
 
 [python-image]: https://img.shields.io/badge/Python-3.5-ff69b4.svg

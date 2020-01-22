@@ -1,25 +1,20 @@
 import torch
 from models import BaseVAE
 from torch import nn
-from torchvision.models import vgg19_bn
 from torch.nn import functional as F
 from .types_ import *
 
 
-class DFCVAE(BaseVAE):
+class MSSIMVAE(BaseVAE):
 
     def __init__(self,
                  in_channels: int,
                  latent_dim: int,
                  hidden_dims: List = None,
-                 alpha:float = 1,
-                 beta:float = 0.5,
                  **kwargs) -> None:
-        super(DFCVAE, self).__init__()
+        super(MSSIMVAE, self).__init__()
 
         self.latent_dim = latent_dim
-        self.alpha = alpha
-        self.beta = beta
 
         modules = []
         if hidden_dims is None:
@@ -78,15 +73,6 @@ class DFCVAE(BaseVAE):
                                       kernel_size= 3, padding= 1),
                             nn.Tanh())
 
-        self.feature_network = vgg19_bn(pretrained=True)
-
-        # Freeze the pretrained feature network
-        for param in self.feature_network.parameters():
-            param.requires_grad = False
-
-        self.feature_network.eval()
-
-
     def encode(self, input: Tensor) -> List[Tensor]:
         """
         Encodes the input by passing through the encoder network
@@ -132,36 +118,10 @@ class DFCVAE(BaseVAE):
     def forward(self, input: Tensor, **kwargs) -> List[Tensor]:
         mu, log_var = self.encode(input)
         z = self.reparameterize(mu, log_var)
-        recons = self.decode(z)
-
-        recons_features = self.extract_features(recons)
-        input_features = self.extract_features(input)
-
-        return  [recons, input, recons_features, input_features, mu, log_var]
-
-    def extract_features(self,
-                         input: Tensor,
-                         feature_layers: List = None) -> List[Tensor]:
-        """
-        Extracts the features from the pretrained model
-        at the layers indicated by feature_layers.
-        :param input: (Tensor) [B x C x H x W]
-        :param feature_layers: List of string of IDs
-        :return: List of the extracted features
-        """
-        if feature_layers is None:
-            feature_layers = ['14', '24', '34', '43']
-        features = []
-        result = input
-        for (key, module) in self.feature_network.features._modules.items():
-            result = module(result)
-            if(key in feature_layers):
-                features.append(result)
-
-        return features
+        return  [self.decode(z), input, mu, log_var]
 
     def loss_function(self,
-                      *args,
+                      *args: Any,
                       **kwargs) -> dict:
         """
         Computes the VAE loss function.
@@ -172,21 +132,16 @@ class DFCVAE(BaseVAE):
         """
         recons = args[0]
         input = args[1]
-        recons_features = args[2]
-        input_features = args[3]
-        mu = args[4]
-        log_var = args[5]
+        mu = args[2]
+        log_var = args[3]
 
         kld_weight = kwargs['M_N'] # Account for the minibatch samples from the dataset
         recons_loss =F.mse_loss(recons, input)
 
-        feature_loss = 0.0
-        for (r, i) in zip(recons_features, input_features):
-            feature_loss += F.mse_loss(r, i)
 
         kld_loss = torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim = 1), dim = 0)
 
-        loss = self.beta * (recons_loss + feature_loss) + self.alpha * kld_weight * kld_loss
+        loss = recons_loss + kld_weight * kld_loss
         return {'loss': loss, 'Reconstruction Loss':recons_loss, 'KLD':-kld_loss}
 
     def sample(self,
@@ -215,3 +170,104 @@ class DFCVAE(BaseVAE):
         """
 
         return self.forward(x)[0]
+
+class MSSIM(nn.Module):
+
+    def __init__(self,
+                 in_channels: int = 3,
+                 window_size: int=11,
+                 size_average:bool = True) -> None:
+        """
+        Computes the differential MS-SSIM loss
+        Reference:
+        [1] https://github.com/jorge-pessoa/pytorch-msssim/blob/dev/pytorch_msssim/__init__.py
+            (MIT License)
+
+        :param in_channels: (Int)
+        :param window_size: (Int)
+        :param size_average: (Bool)
+        """
+        super(MSSIM, self).__init__()
+        self.in_channels = in_channels
+        self.window_size = window_size
+        self.size_average = size_average
+
+    def gaussian_window(self, window_size:int, sigma: float) -> Tensor:
+        kernel = torch.tensor([torch.exp((x - window_size // 2)**2/(2 * sigma ** 2))
+                               for x in range(window_size)])
+        return kernel/kernel.sum()
+
+    def create_window(self, window_size, in_channels):
+        _1D_window = self.gaussian_window(window_size, 1.5).unsqueeze(1)
+        _2D_window = _1D_window.mm(_1D_window.t()).float().unsqueeze(0).unsqueeze(0)
+        window = _2D_window.expand(in_channels, 1, window_size, window_size).contiguous()
+        return window
+
+    def ssim(self,
+             img1: Tensor,
+             img2: Tensor,
+             window_size: int,
+             in_channel: int,
+             size_average: bool) -> Tensor:
+
+        device = img1.device
+        window = self.create_window(window_size, in_channel).cuda(device)
+        mu1 = F.conv2d(img1, window, padding= window_size//2, groups=in_channel)
+        mu2 = F.conv2d(img2, window, padding= window_size//2, groups=in_channel)
+
+        mu1_sq = mu1.pow(2)
+        mu2_sq = mu2.pow(2)
+        mu1_mu2 = mu1 * mu2
+
+        sigma1_sq = F.conv2d(img1 * img1, window, padding = window_size//2, groups=in_channel) - mu1_sq
+        sigma2_sq = F.conv2d(img2 * img2, window, padding = window_size//2, groups=in_channel) - mu2_sq
+        sigma12   = F.conv2d(img1 * img2, window, padding = window_size//2, groups=in_channel) - mu1_mu2
+
+        img_range = img1.max() - img1.min()
+        C1 = (0.01 * img_range) ** 2
+        C2 = (0.03 * img_range) ** 2
+
+        v1 = 2.0 * sigma12 + C2
+        v2 = sigma1_sq + sigma2_sq + C2
+        cs = torch.mean(v1 / v2)  # contrast sensitivity
+
+        ssim_map = ((2 * mu1_mu2 + C1) * v1) / ((mu1_sq + mu2_sq + C1) * v2)
+
+        if size_average:
+            ret = ssim_map.mean()
+        else:
+            ret = ssim_map.mean(1).mean(1).mean(1)
+        return ret, cs
+
+    def forward(self, img1: Tensor, img2: Tensor) -> Tensor:
+        device = img1.device
+        weights = torch.FloatTensor([0.0448, 0.2856, 0.3001, 0.2363, 0.1333]).to(device)
+        levels = weights.size()[0]
+        mssim = []
+        mcs = []
+        for _ in range(levels):
+            sim, cs = self.ssim(img1, img2,
+                                self.window_size,
+                                self.in_channels,
+                                self.size_average)
+            mssim.append(sim)
+            mcs.append(cs)
+
+            img1 = F.avg_pool2d(img1, (2, 2))
+            img2 = F.avg_pool2d(img2, (2, 2))
+
+        mssim = torch.stack(mssim)
+        mcs = torch.stack(mcs)
+
+        # # Normalize (to avoid NaNs during training unstable models, not compliant with original definition)
+        # if normalize:
+        #     mssim = (mssim + 1) / 2
+        #     mcs = (mcs + 1) / 2
+
+        pow1 = mcs ** weights
+        pow2 = mssim ** weights
+
+        output = torch.prod(pow1[:-1] * pow2[-1])
+        return output
+
+
