@@ -3,6 +3,7 @@ from models import BaseVAE
 from torch import nn
 from torch.nn import functional as F
 from .types_ import *
+from math import exp
 
 
 class MSSIMVAE(BaseVAE):
@@ -11,10 +12,13 @@ class MSSIMVAE(BaseVAE):
                  in_channels: int,
                  latent_dim: int,
                  hidden_dims: List = None,
+                 window_size: int = 11,
+                 size_average: bool = True,
                  **kwargs) -> None:
         super(MSSIMVAE, self).__init__()
 
         self.latent_dim = latent_dim
+        self.in_channels = in_channels
 
         modules = []
         if hidden_dims is None:
@@ -72,6 +76,10 @@ class MSSIMVAE(BaseVAE):
                             nn.Conv2d(hidden_dims[-1], out_channels= 3,
                                       kernel_size= 3, padding= 1),
                             nn.Tanh())
+
+        self.mssim_loss = MSSIM(self.in_channels,
+                                window_size,
+                                size_average)
 
     def encode(self, input: Tensor) -> List[Tensor]:
         """
@@ -136,7 +144,7 @@ class MSSIMVAE(BaseVAE):
         log_var = args[3]
 
         kld_weight = kwargs['M_N'] # Account for the minibatch samples from the dataset
-        recons_loss =F.mse_loss(recons, input)
+        recons_loss = self.mssim_loss(recons, input)
 
 
         kld_loss = torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim = 1), dim = 0)
@@ -193,7 +201,7 @@ class MSSIM(nn.Module):
         self.size_average = size_average
 
     def gaussian_window(self, window_size:int, sigma: float) -> Tensor:
-        kernel = torch.tensor([torch.exp((x - window_size // 2)**2/(2 * sigma ** 2))
+        kernel = torch.tensor([exp((x - window_size // 2)**2/(2 * sigma ** 2))
                                for x in range(window_size)])
         return kernel/kernel.sum()
 
@@ -211,7 +219,7 @@ class MSSIM(nn.Module):
              size_average: bool) -> Tensor:
 
         device = img1.device
-        window = self.create_window(window_size, in_channel).cuda(device)
+        window = self.create_window(window_size, in_channel).to(device)
         mu1 = F.conv2d(img1, window, padding= window_size//2, groups=in_channel)
         mu2 = F.conv2d(img2, window, padding= window_size//2, groups=in_channel)
 
@@ -245,6 +253,7 @@ class MSSIM(nn.Module):
         levels = weights.size()[0]
         mssim = []
         mcs = []
+
         for _ in range(levels):
             sim, cs = self.ssim(img1, img2,
                                 self.window_size,
@@ -268,6 +277,6 @@ class MSSIM(nn.Module):
         pow2 = mssim ** weights
 
         output = torch.prod(pow1[:-1] * pow2[-1])
-        return output
+        return 1 - output
 
 

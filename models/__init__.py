@@ -24,4 +24,4 @@ vae_models = {'VanillaVAE':VanillaVAE,
               'VampVAE':VampVAE,
               'IWAE':IWAE,
               'DFCVAE':DFCVAE,
-              'MSSIM_VAE':MSSIMVAE}
+              'MSSIMVAE':MSSIMVAE}

@@ -35,7 +35,7 @@ $ pip install -r requirements.txt
 $ cd PyTorch-VAE
 $ python run.py -c configs/<config-file-name.yaml>
 ```
-Config file template
+**Config file template**
 ```yaml
 model_params:
   name: "<name of VAE model>"
@@ -60,6 +60,10 @@ logging_params:
 
 
 ----
+<h3 align="center">
+  <b>Results</b><br>
+</h3>
+
 
 | Model                 | Paper                                            |Reconstruction | Samples |
 |-----------------------|--------------------------------------------------|---------------|---------|
@@ -69,6 +73,7 @@ logging_params:
 | Beta-VAE              |[Link](https://openreview.net/forum?id=Sy2fzU9gl) |    ![][8]     | ![][7]  |
 | IWAE (5 Samples)      |[Link](https://arxiv.org/abs/1804.03599)          |    ![][10]    | ![][9]  |
 | DFCVAE                |[Link](https://arxiv.org/abs/1610.00291)          |    ![][12]    | ![][11] |
+| MSSIM VAE             |[Link](https://arxiv.org/abs/1511.06409)          |    ![][14]    | ![][13] |
 
 <!--| Disentangled Beta-VAE |[Link](https://arxiv.org/abs/1804.03599)          |    ![][10]     | ![][9] |-->
 
@@ -79,14 +84,15 @@ logging_params:
 - [ ] Conditional VAE
 - [ ] Gamma VAE
 - [x] Beta VAE
-- [ ] Beta TC-VAE
+- [ ] Beta TC-VAE 
 - [x] DFC VAE
+- [x] MSSIM VAE
 - [ ] InfoVAE (MMD-VAE)
 - [x] WAE-MMD
 - [ ] AAE
 - [ ] TwoStageVAE
 - [ ] VAE-GAN
-- [ ] Vamp VAE
+- [ ] Vamp VAE  
 - [ ] HVAE (VAE with Vamp Prior)
 - [x] IWAE
 - [ ] VLAE
@@ -111,7 +117,9 @@ I would be happy to include your result (along with your config file) in this re
 [9]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/IWAE_19.png
 [10]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_IWAE_19.png
 [11]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/DFCVAE_49.png
-[12]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_DFCVAE_40.png
+[12]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_DFCVAE_49.png
+[13]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/MSSIMVAE_49.png
+[14]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_MSSIMVAE_49.png
 
 
 [python-image]: https://img.shields.io/badge/Python-3.5-ff69b4.svg
