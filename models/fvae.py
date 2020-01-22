@@ -11,10 +11,12 @@ class FactorVAE(BaseVAE):
                  in_channels: int,
                  latent_dim: int,
                  hidden_dims: List = None,
+                 gamma: float = 40.,
                  **kwargs) -> None:
         super(FactorVAE, self).__init__()
 
         self.latent_dim = latent_dim
+        self.gamma = gamma
 
         modules = []
         if hidden_dims is None:
@@ -73,6 +75,7 @@ class FactorVAE(BaseVAE):
                                       kernel_size= 3, padding= 1),
                             nn.Tanh())
 
+        # Discriminator network for the Total Correlation (TC) loss
         self.discrminator = nn.Sequential(nn.Linear(self.latent_dim, 1000),
                                           nn.BatchNorm1d(1000),
                                           nn.LeakyReLU(0.2),
@@ -83,6 +86,8 @@ class FactorVAE(BaseVAE):
                                           nn.BatchNorm1d(1000),
                                           nn.LeakyReLU(0.2),
                                           nn.Linear(1000, 2))
+        self.D_z_reserve = None
+
 
     def encode(self, input: Tensor) -> List[Tensor]:
         """
@@ -129,7 +134,7 @@ class FactorVAE(BaseVAE):
     def forward(self, input: Tensor, **kwargs) -> List[Tensor]:
         mu, log_var = self.encode(input)
         z = self.reparameterize(mu, log_var)
-        return  [self.decode(z), input, mu, log_var]
+        return  [self.decode(z), input, mu, log_var, z]
 
     def permute_latent(self, z: Tensor) -> Tensor:
         """
@@ -157,6 +162,7 @@ class FactorVAE(BaseVAE):
         input = args[1]
         mu = args[2]
         log_var = args[3]
+        z = args[4]
 
         kld_weight = kwargs['M_N'] # Account for the minibatch samples from the dataset
         optimizer_idx = kwargs['optimizer_idx']
@@ -164,20 +170,32 @@ class FactorVAE(BaseVAE):
         # Update the VAE
         if optimizer_idx == 0:
             recons_loss =F.mse_loss(recons, input)
-
-
             kld_loss = torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim = 1), dim = 0)
 
-            loss = recons_loss + kld_weight * kld_loss
-            return {'loss': loss,
-                    'Reconstruction Loss':recons_loss,
-                    'KLD':-kld_loss}
+            self.D_z_reserve = self.discrminator(z)
+            vae_tc_loss = (self.D_z_reserve[:, 0] - self.D_z_reserve[:, 1]).mean()
+
+            loss = recons_loss + kld_weight * kld_loss - self.gamma * vae_tc_loss
+            return {'loss': loss} #,
+                    # 'Reconstruction Loss':recons_loss,
+                    # 'KLD':-kld_loss,
+                    # 'VAE_TC Loss': vae_tc_loss}
 
         # Update the Discriminator
         elif optimizer_idx == 1:
-            pass
+            true_labels = torch.ones(input.size(0), dtype= torch.long, requires_grad=False)
+            false_labels = torch.zeros(input.size(0), dtype= torch.long, requires_grad=False)
 
+            real_img2 = kwargs['secondary_input']
 
+            result = self.forward(real_img2)
+            z2 = result[4].detach() # Detach so that VAE is not trained again
+            z2_perm = self.permute_latent(z2)
+            D_z2_perm = self.discrminator(z2_perm)
+            D_tc_loss = -0.5 * (F.cross_entropy(self.D_z_reserve, false_labels) +
+                                F.cross_entropy(D_z2_perm, true_labels))
+
+            return {'loss': D_tc_loss}
 
     def sample(self,
                num_samples:int,

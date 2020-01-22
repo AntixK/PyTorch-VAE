@@ -22,7 +22,7 @@ Here are the [results](https://github.com/AntixK/PyTorch-VAE/blob/master/README.
 ### Requirements
 - Python >= 3.5
 - PyTorch >= 1.3
-- Pytorch Lightning >= 0.5.3 ([GitHub Repo](https://github.com/PyTorchLightning/pytorch-lightning/tree/deb1581e26b7547baf876b7a94361e60bb200d32))
+- Pytorch Lightning >= 0.6.0 ([GitHub Repo](https://github.com/PyTorchLightning/pytorch-lightning/tree/deb1581e26b7547baf876b7a94361e60bb200d32))
 - CUDA enabled computing device
 
 ### Installation
@@ -43,12 +43,18 @@ model_params:
   name: "<name of VAE model>"
   in_channels: 3
   latent_dim: 
+    .         # Other parameters required by the model
+    .
+    .
 
 exp_params:
   data_path: "<path to the celebA dataset>"
   img_size: 64    # Models are designed to work for this size
   batch_size: 64  # Better to have a square number
   LR: 0.005
+    .         # Other arguments required for training like scheduler etc.
+    .
+    .
 
 trainer_params:
   gpus: 1         

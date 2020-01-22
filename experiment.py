@@ -31,9 +31,20 @@ class VAEXperiment(pl.LightningModule):
 
         results = self.forward(real_img, labels = labels)
 
+        real_img2 = None
+
+        try:
+            # Required for factor VAE
+            if self.params['require_secondary_input']:
+                real_img2,_ = next(iter(self.sample_dataloader))
+                real_img2 = real_img.to(self.curr_device)
+        except:
+            pass
+
         train_loss = self.model.loss_function(*results,
                                               M_N = self.params['batch_size']/ self.num_train_imgs,
-                                              optimizer_idx = optimizer_idx)
+                                              optimizer_idx=optimizer_idx,
+                                              secondary_input = real_img2)
 
         self.logger.experiment.log({key: val.item() for key, val in train_loss.items()})
 
@@ -75,6 +86,14 @@ class VAEXperiment(pl.LightningModule):
                           nrow=int(math.sqrt(self.params['batch_size'])))
         del test_input, recons, samples
 
+    def on_before_backward(self, loss, optimizer_idx):
+        # example to retrain graph for this optimizer
+        opt = {'loss': loss,
+               'skip_backward': False,
+               'retain_graph': False}
+        if optimizer_idx < 1:
+            opt['retain_graph'] = True
+        return opt
 
     def configure_optimizers(self):
 
