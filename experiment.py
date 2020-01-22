@@ -25,26 +25,28 @@ class VAEXperiment(pl.LightningModule):
     def forward(self, input: Tensor, **kwargs) -> Tensor:
         return self.model(input, **kwargs)
 
-    def training_step(self, batch, batch_idx):
+    def training_step(self, batch, batch_idx, optimizer_idx = 0):
         real_img, labels = batch
         self.curr_device = real_img.device
 
         results = self.forward(real_img, labels = labels)
 
         train_loss = self.model.loss_function(*results,
-                                              M_N = self.params['batch_size']/ self.num_train_imgs )
+                                              M_N = self.params['batch_size']/ self.num_train_imgs,
+                                              optimizer_idx = optimizer_idx)
 
         self.logger.experiment.log({key: val.item() for key, val in train_loss.items()})
 
         return train_loss
 
-    def validation_step(self, batch, batch_idx):
+    def validation_step(self, batch, batch_idx, optimizer_idx = 0):
         real_img, labels = batch
         self.curr_device = real_img.device
 
         results = self.forward(real_img, labels = labels)
         val_loss = self.model.loss_function(*results,
-                                            M_N = self.params['batch_size']/ self.num_train_imgs)
+                                            M_N = self.params['batch_size']/ self.num_train_imgs,
+                                            optimizer_idx = optimizer_idx)
 
         return val_loss
 
@@ -57,25 +59,56 @@ class VAEXperiment(pl.LightningModule):
     def sample_images(self):
         samples = self.model.sample(self.params['batch_size'], self.curr_device).cpu()
         vutils.save_image(samples.data,
-                          f"{self.logger.save_dir}/{self.logger.name}/sample_{self.current_epoch}.png",
+                          f"{self.logger.save_dir}{self.logger.name}/version_{self.logger.version}/"
+                          f"{self.logger.name}_{self.current_epoch}.png",
                           normalize=True,
                           nrow=int(math.sqrt(self.params['batch_size'])))
 
         # Get sample reconstruction image
         test_input, _ = next(iter(self.sample_dataloader))
-        test_input = test_input.cuda(self.curr_device)
+        test_input = test_input.to(self.curr_device)
         recons = self.model.generate(test_input)
         vutils.save_image(recons.data,
-                          f"{self.logger.save_dir}/{self.logger.name}/recons_{self.current_epoch}.png",
+                          f"{self.logger.save_dir}{self.logger.name}/version_{self.logger.version}/"
+                          f"recons_{self.logger.name}_{self.current_epoch}.png",
                           normalize=True,
                           nrow=int(math.sqrt(self.params['batch_size'])))
-        del test_input, recons, samples #, samples, z
+        del test_input, recons, samples
 
 
     def configure_optimizers(self):
+
+        optims = []
+        scheds = []
+
         optimizer = optim.Adam(self.model.parameters(), lr=self.params['LR'])
-        scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma = self.params['scheduler_gamma'])
-        return [optimizer] #, [scheduler]
+        optims.append(optimizer)
+        # Check if more than 1 optimizer is required (Used for adversarial training)
+        try:
+            if self.params['LR_2'] is not None:
+                optimizer2 = optim.Adam(getattr(self.model,self.params['submodel']).parameters(),
+                                        lr=self.params['LR_2'])
+                optims.append(optimizer2)
+        except:
+            pass
+
+        try:
+            if self.params['scheduler_gamma'] is not None:
+                scheduler = optim.lr_scheduler.ExponentialLR(optims[0],
+                                                             gamma = self.params['scheduler_gamma'])
+                scheds.append(scheduler)
+
+                # Check if another scheduler is required for the second optimizer
+                try:
+                    if self.params['scheduler_gamma_2'] is not None:
+                        scheduler2 = optim.lr_scheduler.ExponentialLR(optims[1],
+                                                                      gamma = self.params['scheduler_gamma_2'])
+                        scheds.append(scheduler2)
+                except:
+                    pass
+                return optims, scheds
+        except:
+            return optims
 
     @pl.data_loader
     def train_dataloader(self):

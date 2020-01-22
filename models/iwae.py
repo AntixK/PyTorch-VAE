@@ -173,7 +173,7 @@ class IWAE(BaseVAE):
         z = torch.randn(num_samples, 1,
                         self.latent_dim)
 
-        z = z.cuda(current_device)
+        z = z.to(current_device)
 
         samples = self.decode(z).squeeze()
         return samples

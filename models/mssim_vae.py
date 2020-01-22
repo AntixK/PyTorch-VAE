@@ -186,7 +186,7 @@ class MSSIM(nn.Module):
                  window_size: int=11,
                  size_average:bool = True) -> None:
         """
-        Computes the differential MS-SSIM loss
+        Computes the differentiable MS-SSIM loss
         Reference:
         [1] https://github.com/jorge-pessoa/pytorch-msssim/blob/dev/pytorch_msssim/__init__.py
             (MIT License)

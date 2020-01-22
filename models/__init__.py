@@ -8,7 +8,8 @@ from .hvae import *
 from .vampvae import *
 from .iwae import *
 from .dfcvae import *
-from .mssim_vae import *
+from .mssim_vae import MSSIMVAE
+from .fvae import *
 
 # Aliases
 VAE = VanillaVAE
@@ -24,4 +25,5 @@ vae_models = {'VanillaVAE':VanillaVAE,
               'VampVAE':VampVAE,
               'IWAE':IWAE,
               'DFCVAE':DFCVAE,
-              'MSSIMVAE':MSSIMVAE}
+              'MSSIMVAE':MSSIMVAE,
+              'FactorVAE':FactorVAE}

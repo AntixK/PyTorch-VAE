@@ -14,14 +14,16 @@
 
 </p>
 
-A Collection of Variational AutoEncoders (VAEs) implemented in PyTorch with focus on reproducibility. The aim of this project is to provide
+A collection of Variational AutoEncoders (VAEs) implemented in PyTorch with focus on reproducibility. The aim of this project is to provide
 a quick and simple working example for many of the cool VAE models out there. All the models are trained on the [CelebA dataset](http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html)
 for consistency and comparison. The architecture of all the models are kept as similar as possible with the same layers, except for cases where the original paper necessitates a radically different architecture.
+Here are the [results](https://github.com/AntixK/PyTorch-VAE/blob/master/README.md#--results) of each model.
 
 ### Requirements
 - Python >= 3.5
 - PyTorch >= 1.3
 - Pytorch Lightning >= 0.5.3 ([GitHub Repo](https://github.com/PyTorchLightning/pytorch-lightning/tree/deb1581e26b7547baf876b7a94361e60bb200d32))
+- CUDA enabled computing device
 
 ### Installation
 ```
@@ -60,9 +62,9 @@ logging_params:
 
 
 ----
-<h3 align="center">
+<h2 align="center">
   <b>Results</b><br>
-</h3>
+</h2>
 
 
 | Model                 | Paper                                            |Reconstruction | Samples |
@@ -81,30 +83,41 @@ logging_params:
 
 ### TODO
 - [x] VanillaVAE
-- [ ] Conditional VAE
-- [ ] Gamma VAE
 - [x] Beta VAE
-- [ ] Beta TC-VAE 
 - [x] DFC VAE
 - [x] MSSIM VAE
-- [ ] InfoVAE (MMD-VAE)
+- [x] IWAE
 - [x] WAE-MMD
-- [ ] AAE
+- [ ] Conditional VAE (in progress)
+- [ ] Gamma VAE (in progress)
+- [ ] Beta TC-VAE (in progress) 
+- [ ] Vamp VAE (in progress)
+- [ ] HVAE (VAE with Vamp Prior) (in progress)
+- [ ] FactorVAE (in progress)
+- [ ] InfoVAE
 - [ ] TwoStageVAE
 - [ ] VAE-GAN
-- [ ] Vamp VAE  
-- [ ] HVAE (VAE with Vamp Prior)
-- [x] IWAE
 - [ ] VLAE
-- [ ] FactorVAE
 - [ ] PixelVAE
 - [ ] VQVAE
 - [ ] StyleVAE
 
 ### Contributing
-If you have trained a better model using these implementations by finetuning the hyper-params in the config file,
+If you have trained a better model, using these implementations, by fine-tuning the hyper-params in the config file,
 I would be happy to include your result (along with your config file) in this repo, citing your name 😊.
 
+### License
+**Apache License 2.0**
+
+| Permissions      | Limitations       | Conditions                       |
+|------------------|-------------------|----------------------------------|
+| ✔️ Commercial use |  ❌  Trademark use |  ⓘ License and copyright notice | 
+| ✔️ Modification   |  ❌  Liability     |  ⓘ State changes                |
+| ✔️ Distribution   |  ❌  Warranty      |                                  |
+| ✔️ Patent use     |                   |                                  |
+| ✔️ Private use    |                   |                                  |
+
+-----------
 
 [1]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/Vanilla%20VAE_25.png
 [2]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_Vanilla%20VAE_25.png
@@ -118,8 +131,8 @@ I would be happy to include your result (along with your config file) in this re
 [10]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_IWAE_19.png
 [11]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/DFCVAE_49.png
 [12]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_DFCVAE_49.png
-[13]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/MSSIMVAE_49.png
-[14]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_MSSIMVAE_49.png
+[13]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/MSSIMVAE_10.png
+[14]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_MSSIMVAE_10.png
 
 
 [python-image]: https://img.shields.io/badge/Python-3.5-ff69b4.svg
