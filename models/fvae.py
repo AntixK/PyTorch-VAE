@@ -76,7 +76,7 @@ class FactorVAE(BaseVAE):
                             nn.Tanh())
 
         # Discriminator network for the Total Correlation (TC) loss
-        self.discrminator = nn.Sequential(nn.Linear(self.latent_dim, 1000),
+        self.discriminator = nn.Sequential(nn.Linear(self.latent_dim, 1000),
                                           nn.BatchNorm1d(1000),
                                           nn.LeakyReLU(0.2),
                                           nn.Linear(1000, 1000),
@@ -172,10 +172,11 @@ class FactorVAE(BaseVAE):
             recons_loss =F.mse_loss(recons, input)
             kld_loss = torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim = 1), dim = 0)
 
-            self.D_z_reserve = self.discrminator(z)
+            self.D_z_reserve = self.discriminator(z)
             vae_tc_loss = (self.D_z_reserve[:, 0] - self.D_z_reserve[:, 1]).mean()
 
             loss = recons_loss + kld_weight * kld_loss - self.gamma * vae_tc_loss
+            # print(f' recons: {recons_loss}, kld: {kld_loss}, VAE_TC_loss: {vae_tc_loss}')
             return {'loss': loss} #,
                     # 'Reconstruction Loss':recons_loss,
                     # 'KLD':-kld_loss,
@@ -183,18 +184,22 @@ class FactorVAE(BaseVAE):
 
         # Update the Discriminator
         elif optimizer_idx == 1:
-            true_labels = torch.ones(input.size(0), dtype= torch.long, requires_grad=False)
-            false_labels = torch.zeros(input.size(0), dtype= torch.long, requires_grad=False)
+
+            device = input.device
+            true_labels = torch.ones(input.size(0), dtype= torch.long,
+                                     requires_grad=False).to(device)
+            false_labels = torch.zeros(input.size(0), dtype= torch.long,
+                                       requires_grad=False).to(device)
 
             real_img2 = kwargs['secondary_input']
 
             result = self.forward(real_img2)
             z2 = result[4].detach() # Detach so that VAE is not trained again
             z2_perm = self.permute_latent(z2)
-            D_z2_perm = self.discrminator(z2_perm)
+            D_z2_perm = self.discriminator(z2_perm)
             D_tc_loss = -0.5 * (F.cross_entropy(self.D_z_reserve, false_labels) +
                                 F.cross_entropy(D_z2_perm, true_labels))
-
+            print(f'D_TC: {D_tc_loss}')
             return {'loss': D_tc_loss}
 
     def sample(self,

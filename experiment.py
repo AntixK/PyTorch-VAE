@@ -12,6 +12,7 @@ from torch.utils.data import DataLoader
 
 
 class VAEXperiment(pl.LightningModule):
+    RETAIN_GRAPH = True
 
     def __init__(self,
                  vae_model: BaseVAE,
@@ -40,7 +41,6 @@ class VAEXperiment(pl.LightningModule):
                 real_img2 = real_img.to(self.curr_device)
         except:
             pass
-
         train_loss = self.model.loss_function(*results,
                                               M_N = self.params['batch_size']/ self.num_train_imgs,
                                               optimizer_idx=optimizer_idx,
@@ -86,14 +86,11 @@ class VAEXperiment(pl.LightningModule):
                           nrow=int(math.sqrt(self.params['batch_size'])))
         del test_input, recons, samples
 
-    def on_before_backward(self, loss, optimizer_idx):
-        # example to retrain graph for this optimizer
-        opt = {'loss': loss,
-               'skip_backward': False,
-               'retain_graph': False}
-        if optimizer_idx < 1:
-            opt['retain_graph'] = True
-        return opt
+    # def backward(self, use_amp, loss, optimizer):
+    #     print('called during backward')
+    #
+    #     loss.backward(retain_graph = self.RETAIN_GRAPH)
+    #     RETAIN_GRAP
 
     def configure_optimizers(self):
 
