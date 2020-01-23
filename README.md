@@ -82,7 +82,7 @@ logging_params:
 | IWAE (5 Samples)      |[Link](https://arxiv.org/abs/1804.03599)          |    ![][10]    | ![][9]  |
 | DFCVAE                |[Link](https://arxiv.org/abs/1610.00291)          |    ![][12]    | ![][11] |
 | MSSIM VAE             |[Link](https://arxiv.org/abs/1511.06409)          |    ![][14]    | ![][13] |
-| Gamma VAE             |[Link](https://arxiv.org/abs/1610.05683)          |               |         |
+| Gamma VAE             |[Link](https://arxiv.org/abs/1610.05683)          |    ![][16]    | ![][15] |
 
 <!--| Disentangled Beta-VAE |[Link](https://arxiv.org/abs/1804.03599)          |    ![][10]     | ![][9] |-->
 
@@ -138,8 +138,10 @@ I would be happy to include your result (along with your config file) in this re
 [10]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_IWAE_19.png
 [11]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/DFCVAE_49.png
 [12]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_DFCVAE_49.png
-[13]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/MSSIMVAE_10.png
-[14]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_MSSIMVAE_10.png
+[13]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/MSSIMVAE_29.png
+[14]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_MSSIMVAE_29.png
+[15]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/GammaVAE_29.png
+[16]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_GammaVAE_29.png
 
 
 [python-image]: https://img.shields.io/badge/Python-3.5-ff69b4.svg
