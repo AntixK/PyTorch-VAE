@@ -117,7 +117,7 @@ class ConditionalVAE(BaseVAE):
         return eps * std + mu
 
     def forward(self, input: Tensor, **kwargs) -> List[Tensor]:
-        y = kwargs['labels']
+        y = kwargs['labels'].float()
         embedded_class = self.embed_class(y)
         embedded_class = embedded_class.view(-1, self.img_size, self.img_size).unsqueeze(1)
         embedded_input = self.embed_data(input)
@@ -144,11 +144,12 @@ class ConditionalVAE(BaseVAE):
         kld_loss = torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim = 1), dim = 0)
 
         loss = recons_loss + kld_weight * kld_loss
-        return {'loss': loss, 'Reconstruction Loss':recons_loss, 'KLD':-kld_loss}
+        return {'loss': loss, 'Reconstruction_Loss':recons_loss, 'KLD':-kld_loss}
 
     def sample(self,
                num_samples:int,
-               current_device: int) -> Tensor:
+               current_device: int,
+               **kwargs) -> Tensor:
         """
         Samples from the latent space and return the corresponding
         image space map.
@@ -156,19 +157,21 @@ class ConditionalVAE(BaseVAE):
         :param current_device: (Int) Device to run the model
         :return: (Tensor)
         """
+        y = kwargs['labels'].float()
         z = torch.randn(num_samples,
                         self.latent_dim)
 
-        z = z.cuda(current_device)
+        z = z.to(current_device)
 
+        z = torch.cat([z, y], dim=1)
         samples = self.decode(z)
         return samples
 
-    def generate(self, x: Tensor) -> Tensor:
+    def generate(self, x: Tensor, **kwargs) -> Tensor:
         """
         Given an input image x, returns the reconstructed image
         :param x: (Tensor) [B x C x H x W]
         :return: (Tensor) [B x C x H x W]
         """
 
-        return self.forward(x)[0]
+        return self.forward(x, **kwargs)[0]

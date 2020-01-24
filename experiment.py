@@ -68,22 +68,27 @@ class VAEXperiment(pl.LightningModule):
         return {'val_loss': avg_loss, 'log': tensorboard_logs}
 
     def sample_images(self):
-        samples = self.model.sample(self.params['batch_size'], self.curr_device).cpu()
+        # Get sample reconstruction image
+        test_input, test_label = next(iter(self.sample_dataloader))
+        test_input = test_input.to(self.curr_device)
+        test_label = test_label.to(self.curr_device)
+        recons = self.model.generate(test_input, labels = test_label)
+        vutils.save_image(recons.data,
+                          f"{self.logger.save_dir}{self.logger.name}/version_{self.logger.version}/"
+                          f"recons_{self.logger.name}_{self.current_epoch}.png",
+                          normalize=True,
+                          nrow=int(math.sqrt(self.params['batch_size'])))
+
+        samples = self.model.sample(self.params['batch_size'],
+                                    self.curr_device,
+                                    labels = test_label).cpu()
         vutils.save_image(samples.data,
                           f"{self.logger.save_dir}{self.logger.name}/version_{self.logger.version}/"
                           f"{self.logger.name}_{self.current_epoch}.png",
                           normalize=True,
                           nrow=int(math.sqrt(self.params['batch_size'])))
 
-        # Get sample reconstruction image
-        test_input, _ = next(iter(self.sample_dataloader))
-        test_input = test_input.to(self.curr_device)
-        recons = self.model.generate(test_input)
-        vutils.save_image(recons.data,
-                          f"{self.logger.save_dir}{self.logger.name}/version_{self.logger.version}/"
-                          f"recons_{self.logger.name}_{self.current_epoch}.png",
-                          normalize=True,
-                          nrow=int(math.sqrt(self.params['batch_size'])))
+
         del test_input, recons, samples
 
     # def backward(self, use_amp, loss, optimizer):
@@ -97,7 +102,9 @@ class VAEXperiment(pl.LightningModule):
         optims = []
         scheds = []
 
-        optimizer = optim.Adam(self.model.parameters(), lr=self.params['LR'])
+        optimizer = optim.Adam(self.model.parameters(),
+                               lr=self.params['LR'],
+                               weight_decay=self.params['weight_decay'])
         optims.append(optimizer)
         # Check if more than 1 optimizer is required (Used for adversarial training)
         try:

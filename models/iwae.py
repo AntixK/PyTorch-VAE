@@ -158,7 +158,7 @@ class IWAE(BaseVAE):
 
         loss = torch.mean(torch.sum(weight * log_weight, dim=-1), dim = 0)
 
-        return {'loss': loss, 'Reconstruction Loss':log_p_x_z.mean(), 'KLD':-kld_loss.mean()}
+        return {'loss': loss, 'Reconstruction_Loss':log_p_x_z.mean(), 'KLD':-kld_loss.mean()}
 
     def sample(self,
                num_samples:int,

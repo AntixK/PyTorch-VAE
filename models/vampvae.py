@@ -165,7 +165,7 @@ class VampVAE(BaseVAE):
 
 
         loss = recons_loss + kld_weight * kld_loss
-        return {'loss': loss, 'Reconstruction Loss':recons_loss, 'KLD':-kld_loss}
+        return {'loss': loss, 'Reconstruction_Loss':recons_loss, 'KLD':-kld_loss}
 
     def sample(self,
                num_samples:int,

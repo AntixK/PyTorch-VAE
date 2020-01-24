@@ -8,6 +8,7 @@ exp_params:
   img_size: 64
   batch_size: 144 # Better to have a square number
   LR: 0.005
+  weight_decay: 0.0
   scheduler_gamma: 0.95
 
 trainer_params:

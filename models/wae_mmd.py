@@ -120,7 +120,7 @@ class WAE_MMD(BaseVAE):
         mmd_loss = self.compute_mmd(z, reg_weight)
 
         loss = recons_loss + mmd_loss
-        return {'loss': loss, 'Reconstruction Loss':recons_loss, 'MMD': mmd_loss}
+        return {'loss': loss, 'Reconstruction_Loss':recons_loss, 'MMD': mmd_loss}
 
     def compute_kernel(self,
                        x1: Tensor,

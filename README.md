@@ -52,13 +52,18 @@ exp_params:
   img_size: 64    # Models are designed to work for this size
   batch_size: 64  # Better to have a square number
   LR: 0.005
-    .         # Other arguments required for training like scheduler etc.
+  weight_decay:
+    .         # Other arguments required for training, like scheduler etc.
     .
     .
 
 trainer_params:
   gpus: 1         
   max_nb_epochs: 50
+  gradient_clip_val: 0.005
+    .
+    .
+    .
 
 logging_params:
   save_dir: "logs/"
