@@ -33,7 +33,6 @@ class VAEXperiment(pl.LightningModule):
         results = self.forward(real_img, labels = labels)
 
         real_img2 = None
-
         try:
             # Required for factor VAE
             if self.params['require_secondary_input']:
@@ -41,10 +40,12 @@ class VAEXperiment(pl.LightningModule):
                 real_img2 = real_img.to(self.curr_device)
         except:
             pass
+
         train_loss = self.model.loss_function(*results,
                                               M_N = self.params['batch_size']/ self.num_train_imgs,
                                               optimizer_idx=optimizer_idx,
-                                              secondary_input = real_img2)
+                                              secondary_input = real_img2,
+                                              batch_idx = batch_idx)
 
         self.logger.experiment.log({key: val.item() for key, val in train_loss.items()})
 
@@ -57,7 +58,8 @@ class VAEXperiment(pl.LightningModule):
         results = self.forward(real_img, labels = labels)
         val_loss = self.model.loss_function(*results,
                                             M_N = self.params['batch_size']/ self.num_train_imgs,
-                                            optimizer_idx = optimizer_idx)
+                                            optimizer_idx = optimizer_idx,
+                                            batch_idx = batch_idx)
 
         return val_loss
 

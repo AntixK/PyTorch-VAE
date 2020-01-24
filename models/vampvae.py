@@ -169,7 +169,7 @@ class VampVAE(BaseVAE):
 
     def sample(self,
                num_samples:int,
-               current_device: int) -> Tensor:
+               current_device: int, **kwargs) -> Tensor:
         """
         Samples from the latent space and return the corresponding
         image space map.
@@ -185,7 +185,7 @@ class VampVAE(BaseVAE):
         samples = self.decode(z)
         return samples
 
-    def generate(self, x: Tensor) -> Tensor:
+    def generate(self, x: Tensor, **kwargs) -> Tensor:
         """
         Given an input image x, returns the reconstructed image
         :param x: (Tensor) [B x C x H x W]

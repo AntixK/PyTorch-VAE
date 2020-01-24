@@ -81,7 +81,7 @@ logging_params:
 | Model                 | Paper                                            |Reconstruction | Samples |
 |-----------------------|--------------------------------------------------|---------------|---------|
 | VAE                   |[Link](https://arxiv.org/abs/1312.6114)           |    ![][2]     | ![][1]  |
-| Conditional VAE       |[Link](https://openreview.net/forum?id=rJWXGDWd-H)|    ![][16]     | ![][15]  |
+| Conditional VAE       |[Link](https://openreview.net/forum?id=rJWXGDWd-H)|    ![][16]    | ![][15] |
 | WAE - MMD (RBF Kernel)|[Link](https://arxiv.org/abs/1711.01558)          |    ![][4]     | ![][3]  |
 | WAE - MMD (IMQ Kernel)|[Link](https://arxiv.org/abs/1711.01558)          |    ![][6]     | ![][5]  |
 | Beta-VAE              |[Link](https://openreview.net/forum?id=Sy2fzU9gl) |    ![][8]     | ![][7]  |
@@ -107,6 +107,7 @@ logging_params:
 - [ ] Vamp VAE (in progress)
 - [ ] HVAE (VAE with Vamp Prior) (in progress)
 - [ ] FactorVAE (in progress)
+- [ ] Catagorical VAE (Gumbel-Softmax VAE)
 - [ ] InfoVAE
 - [ ] TwoStageVAE
 - [ ] VAE-GAN
@@ -146,8 +147,8 @@ I would be happy to include your result (along with your config file) in this re
 [12]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_DFCVAE_49.png
 [13]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/MSSIMVAE_29.png
 [14]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_MSSIMVAE_29.png
-[15]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/ConditionalVAE_4.png
-[16]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_ConditionalVAE_4.png
+[15]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/ConditionalVAE_20.png
+[16]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_ConditionalVAE_20.png
 
 
 [python-image]: https://img.shields.io/badge/Python-3.5-ff69b4.svg

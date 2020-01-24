@@ -230,7 +230,7 @@ class HVAE(BaseVAE):
 
         return {'loss': loss, 'Reconstruction Loss':recons_loss, 'KLD':-kld_loss}
 
-    def sample(self, batch_size:int, current_device: int) -> Tensor:
+    def sample(self, batch_size:int, current_device: int, **kwargs) -> Tensor:
         z2 = torch.randn(batch_size,
                          self.latent2_dim)
 
@@ -249,7 +249,7 @@ class HVAE(BaseVAE):
 
         return samples
 
-    def generate(self, x: Tensor) -> Tensor:
+    def generate(self, x: Tensor, **kwargs) -> Tensor:
         """
         Given an input image x, returns the reconstructed image
         :param x: (Tensor) [B x C x H x W]
