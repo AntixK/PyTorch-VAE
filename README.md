@@ -81,14 +81,15 @@ logging_params:
 | Model                 | Paper                                            |Reconstruction | Samples |
 |-----------------------|--------------------------------------------------|---------------|---------|
 | VAE                   |[Link](https://arxiv.org/abs/1312.6114)           |    ![][2]     | ![][1]  |
+| Conditional VAE       |[Link](https://openreview.net/forum?id=rJWXGDWd-H)|    ![][16]     | ![][15]  |
 | WAE - MMD (RBF Kernel)|[Link](https://arxiv.org/abs/1711.01558)          |    ![][4]     | ![][3]  |
 | WAE - MMD (IMQ Kernel)|[Link](https://arxiv.org/abs/1711.01558)          |    ![][6]     | ![][5]  |
 | Beta-VAE              |[Link](https://openreview.net/forum?id=Sy2fzU9gl) |    ![][8]     | ![][7]  |
 | IWAE (5 Samples)      |[Link](https://arxiv.org/abs/1804.03599)          |    ![][10]    | ![][9]  |
 | DFCVAE                |[Link](https://arxiv.org/abs/1610.00291)          |    ![][12]    | ![][11] |
 | MSSIM VAE             |[Link](https://arxiv.org/abs/1511.06409)          |    ![][14]    | ![][13] |
-| Gamma VAE             |[Link](https://arxiv.org/abs/1610.05683)          |    ![][16]    | ![][15] |
 
+<!-- | Gamma VAE             |[Link](https://arxiv.org/abs/1610.05683)          |    ![][16]    | ![][15] |-->
 <!--| Disentangled Beta-VAE |[Link](https://arxiv.org/abs/1804.03599)          |    ![][10]     | ![][9] |-->
 
 
@@ -100,7 +101,7 @@ logging_params:
 - [x] MSSIM VAE
 - [x] IWAE
 - [x] WAE-MMD
-- [ ] Conditional VAE (in progress)
+- [x] Conditional VAE
 - [ ] Gamma VAE (in progress)
 - [ ] Beta TC-VAE (in progress) 
 - [ ] Vamp VAE (in progress)
@@ -145,8 +146,8 @@ I would be happy to include your result (along with your config file) in this re
 [12]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_DFCVAE_49.png
 [13]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/MSSIMVAE_29.png
 [14]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_MSSIMVAE_29.png
-[15]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/GammaVAE_29.png
-[16]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_GammaVAE_29.png
+[15]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/ConditionalVAE_4.png
+[16]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_ConditionalVAE_4.png
 
 
 [python-image]: https://img.shields.io/badge/Python-3.5-ff69b4.svg
