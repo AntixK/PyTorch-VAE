@@ -15,7 +15,7 @@ class CategoricalVAE(BaseVAE):
                  hidden_dims: List = None,
                  temperature: float = 0.5,
                  anneal_rate: float = 3e-5,
-                 annela_interval: int = 100, # every 100 batches
+                 anneal_interval: int = 100, # every 100 batches
                  **kwargs) -> None:
         super(CategoricalVAE, self).__init__()
 
@@ -24,7 +24,7 @@ class CategoricalVAE(BaseVAE):
         self.temp = temperature
         self.min_temp = temperature
         self.anneal_rate = anneal_rate
-        self.anneal_interval = annela_interval
+        self.anneal_interval = anneal_interval
 
         modules = []
         if hidden_dims is None:
@@ -82,6 +82,7 @@ class CategoricalVAE(BaseVAE):
                             nn.Conv2d(hidden_dims[-1], out_channels= 3,
                                       kernel_size= 3, padding= 1),
                             nn.Tanh())
+        self.sampling_dist = torch.distributions.OneHotCategorical(1. / categorical_dim * torch.ones((self.categorical_dim, 1)))
 
     def encode(self, input: Tensor) -> List[Tensor]:
         """
@@ -103,7 +104,7 @@ class CategoricalVAE(BaseVAE):
         """
         Maps the given latent codes
         onto the image space.
-        :param z: (Tensor) [B x D]
+        :param z: (Tensor) [B x D x Q]
         :return: (Tensor) [B x C x H x W]
         """
         result = self.decoder_input(z)
@@ -153,11 +154,11 @@ class CategoricalVAE(BaseVAE):
         batch_idx = kwargs['batch_idx']
 
         # Anneal the temperature at regular intervals
-        # if batch_idx % self.anneal_interval == 0:
-        #     self.temp = np.maximum(self.temp * np.exp(- self.anneal_rate * batch_idx),
-        #                            self.min_temp)
+        if batch_idx % self.anneal_interval == 0 and self.training:
+            self.temp = np.maximum(self.temp * np.exp(- self.anneal_rate * batch_idx),
+                                   self.min_temp)
 
-        recons_loss =F.mse_loss(recons, input)
+        recons_loss =F.mse_loss(recons, input, reduction='mean')
 
         # KL divergence between gumbel-softmax distribution
         eps = 1e-7
@@ -169,7 +170,8 @@ class CategoricalVAE(BaseVAE):
         h2 = q_p * np.log(1. / self.categorical_dim + eps)
         kld_loss = torch.mean(torch.sum(h1 - h2, dim =(1,2)), dim=0)
 
-        loss = recons_loss + kld_weight * kld_loss
+        # kld_weight = 1.2
+        loss = 30. * recons_loss + kld_weight * kld_loss
         return {'loss': loss, 'Reconstruction_Loss':recons_loss, 'KLD':-kld_loss}
 
     def sample(self,
@@ -182,11 +184,16 @@ class CategoricalVAE(BaseVAE):
         :param current_device: (Int) Device to run the model
         :return: (Tensor)
         """
-        z = torch.randn(num_samples,
-                        self.latent_dim)
+        # [S x D x Q]
 
-        z = z.to(current_device)
+        M = num_samples * self.latent_dim
+        np_y = np.zeros((M, self.categorical_dim), dtype=np.float32)
+        np_y[range(M), np.random.choice(self.categorical_dim, M)] = 1
+        np_y = np.reshape(np_y, [M // self.latent_dim, self.latent_dim, self.categorical_dim])
+        z = torch.from_numpy(np_y)
 
+        # z = self.sampling_dist.sample((num_samples * self.latent_dim, ))
+        z = z.view(num_samples, self.latent_dim * self.categorical_dim).to(current_device)
         samples = self.decode(z)
         return samples
 

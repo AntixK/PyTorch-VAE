@@ -6,7 +6,7 @@ from models.types_ import *
 import pytorch_lightning as pl
 from torchvision import transforms
 import torchvision.utils as vutils
-from torchvision.datasets import CelebA
+from torchvision.datasets import CelebA, CIFAR10
 from torch.utils.data import DataLoader
 
 
@@ -81,6 +81,12 @@ class VAEXperiment(pl.LightningModule):
                           normalize=True,
                           nrow=int(math.sqrt(self.params['batch_size'])))
 
+        vutils.save_image(test_input.data,
+                          f"{self.logger.save_dir}{self.logger.name}/version_{self.logger.version}/"
+                          f"real_img_{self.logger.name}_{self.current_epoch}.png",
+                          normalize=True,
+                          nrow=int(math.sqrt(self.params['batch_size'])))
+
         samples = self.model.sample(self.params['batch_size'],
                                     self.curr_device,
                                     labels = test_label).cpu()
@@ -138,10 +144,23 @@ class VAEXperiment(pl.LightningModule):
     @pl.data_loader
     def train_dataloader(self):
         transform = self.data_transforms()
-        dataset = CelebA(root = self.params['data_path'],
-                         split = "train",
-                         transform=transform,
-                         download=False)
+
+        if self.params['dataset'] == 'celeba':
+            dataset = CelebA(root = self.params['data_path'],
+                             split = "train",
+                             transform=transform,
+                             download=False)
+        # Required for Categorical VAE
+        elif self.params['dataset'] == 'cifar10':
+            target_transforms = self.target_transforms()
+            dataset = CIFAR10(root = self.params['data_path'],
+                              train = True,
+                              transform=transform,
+                              target_transform=target_transforms,
+                              download=False)
+        else:
+            raise ValueError('Undefined dataset type')
+
         self.num_train_imgs = len(dataset)
         return DataLoader(dataset,
                           batch_size= self.params['batch_size'],
@@ -152,22 +171,61 @@ class VAEXperiment(pl.LightningModule):
     def val_dataloader(self):
         transform = self.data_transforms()
 
+        if self.params['dataset'] == 'celeba':
+            self.sample_dataloader =  DataLoader(CelebA(root = self.params['data_path'],
+                                                        split = "test",
+                                                        transform=transform,
+                                                        download=False),
+                                                 batch_size= self.params['batch_size'],
+                                                 shuffle = True,
+                                                 drop_last=True)
 
-        self.sample_dataloader =  DataLoader(CelebA(root = self.params['data_path'],
-                                                    split = "test",
-                                                    transform=transform,
-                                                    download=False),
-                                             batch_size= self.params['batch_size'],
-                                             shuffle = True,
-                                             drop_last=True)
+        elif self.params['dataset'] == 'cifar10':
+            target_transforms = self.target_transforms()
+            self.sample_dataloader =  DataLoader(CIFAR10(root = self.params['data_path'],
+                                                         train = False,
+                                                         transform=transform,
+                                                         target_transform=target_transforms,
+                                                         download=False),
+                                                 batch_size= self.params['batch_size'],
+                                                 shuffle = True,
+                                                 drop_last=True)
+        else:
+            raise ValueError('Undefined dataset type')
         return self.sample_dataloader
 
     def data_transforms(self):
+
         SetRange = transforms.Lambda(lambda X: 2 * X - 1.)
-        transform = transforms.Compose([transforms.RandomHorizontalFlip(),
-                                        transforms.CenterCrop(148),
-                                        transforms.Resize(self.params['img_size']),
-                                        transforms.ToTensor(),
-                                        SetRange])
+
+        if self.params['dataset'] == 'celeba':
+            transform = transforms.Compose([transforms.RandomHorizontalFlip(),
+                                            transforms.CenterCrop(148),
+                                            transforms.Resize(self.params['img_size']),
+                                            transforms.ToTensor(),
+                                            SetRange])
+
+        if self.params['dataset'] == 'cifar10':
+            transform = transforms.Compose([transforms.RandomHorizontalFlip(),
+                                            transforms.ToTensor(),
+                                            transforms.Lambda(lambda img:
+                                                              torch.nn.functional.upsample_bilinear(
+                                                                  img.unsqueeze(0),
+                                                                  self.params['img_size']).squeeze()
+                                                              ),
+                                            SetRange])
+        else:
+            raise ValueError('Undefined dataset type')
         return transform
+
+    def target_transforms(self):
+        transform = transforms.Compose([transforms.Lambda(lambda labels:
+                                                          torch.zeros(1, 10).scatter_(1,
+                                                                                      torch.tensor(labels).view(-1, 1),
+                                                                                      1)
+                                                          )
+                                        ])
+
+        # return transform
+
 

@@ -5,6 +5,7 @@ model_params:
   gamma: 40
 
 exp_params:
+  dataset: celeba
   data_path: "../../shared/Data/"
   submodel: 'discriminator'
   require_secondary_input: True
@@ -19,7 +20,7 @@ exp_params:
 trainer_params:
   gpus: [2]
   max_nb_epochs: 30
-
+  max_epochs: 50
 
 logging_params:
   save_dir: "logs/"

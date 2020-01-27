@@ -28,5 +28,11 @@ class TestVAE(unittest.TestCase):
         print(loss)
 
 
+    def test_sample(self):
+        self.model.cuda()
+        y = self.model.sample(144, 0)
+        print(y.shape)
+
+
 if __name__ == '__main__':
     unittest.main()
