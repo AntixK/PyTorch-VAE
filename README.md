@@ -154,10 +154,10 @@ I would be happy to include your result (along with your config file) in this re
 [14]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_MSSIMVAE_29.png
 [15]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/ConditionalVAE_20.png
 [16]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_ConditionalVAE_20.png
-[17]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/CategoricalVAE_20.png
-[18]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_CategoricalVAE_20.png
-[19]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/JointVAE_20.png
-[20]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_JointVAE_20.png
+[17]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/CategoricalVAE_12.png
+[18]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_CategoricalVAE_12.png
+[19]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/JointVAE_6.png
+[20]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_JointVAE_6.png
 
 [python-image]: https://img.shields.io/badge/Python-3.5-ff69b4.svg
 [python-url]: https://www.python.org/
