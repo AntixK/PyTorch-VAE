@@ -1,6 +1,6 @@
 import torch
 import unittest
-from models import GumbelVAE
+from models import JointVAE
 from torchsummary import summary
 
 
@@ -8,7 +8,7 @@ class TestVAE(unittest.TestCase):
 
     def setUp(self) -> None:
         # self.model2 = VAE(3, 10)
-        self.model = GumbelVAE(3, 10)
+        self.model = JointVAE(3, 10, 40, 0.0)
 
     def test_summary(self):
         print(summary(self.model, (3, 64, 64), device='cpu'))

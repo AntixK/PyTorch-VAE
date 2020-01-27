@@ -88,7 +88,8 @@ logging_params:
 | IWAE (5 Samples)      |[Link](https://arxiv.org/abs/1804.03599)          |    ![][10]    | ![][9]  |
 | DFCVAE                |[Link](https://arxiv.org/abs/1610.00291)          |    ![][12]    | ![][11] |
 | MSSIM VAE             |[Link](https://arxiv.org/abs/1511.06409)          |    ![][14]    | ![][13] |
-| Categorical VAE (CIFAR10)|[Link](https://arxiv.org/abs/1611.01144)       |    ![][18]    | ![][17] |
+| Categorical VAE       |[Link](https://arxiv.org/abs/1611.01144)          |    ![][18]    | ![][17] |
+| Joint VAE             |[Link](https://arxiv.org/abs/1804.00104)          |    ![][20]    | ![][19] |
 
 <!-- | Gamma VAE             |[Link](https://arxiv.org/abs/1610.05683)          |    ![][16]    | ![][15] |-->
 <!--| Disentangled Beta-VAE |[Link](https://arxiv.org/abs/1804.03599)          |    ![][10]     | ![][9] |-->
@@ -104,6 +105,7 @@ logging_params:
 - [x] WAE-MMD
 - [x] Conditional VAE
 - [x] Categorical VAE (Gumbel-Softmax VAE)
+- [x] Joint VAE
 - [ ] Gamma VAE (in progress)
 - [ ] Beta TC-VAE (in progress) 
 - [ ] Vamp VAE (in progress)
@@ -117,7 +119,7 @@ logging_params:
 - [ ] VQVAE
 - [ ] StyleVAE
 - [ ] Sequential VAE
-- [ ] Joint VAE
+
 
 ### Contributing
 If you have trained a better model, using these implementations, by fine-tuning the hyper-params in the config file,
@@ -154,7 +156,8 @@ I would be happy to include your result (along with your config file) in this re
 [16]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_ConditionalVAE_20.png
 [17]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/CategoricalVAE_20.png
 [18]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_CategoricalVAE_20.png
-
+[19]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/JointVAE_20.png
+[20]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_JointVAE_20.png
 
 [python-image]: https://img.shields.io/badge/Python-3.5-ff69b4.svg
 [python-url]: https://www.python.org/

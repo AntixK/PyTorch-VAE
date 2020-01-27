@@ -11,12 +11,13 @@ from .dfcvae import *
 from .mssim_vae import MSSIMVAE
 from .fvae import *
 from .cat_vae import *
+from .joint_vae import *
 
 # Aliases
 VAE = VanillaVAE
 GaussianVAE = VanillaVAE
 CVAE = ConditionalVAE
-GUMBELVAE = CategoricalVAE
+GumbelVAE = CategoricalVAE
 
 vae_models = {'VanillaVAE':VanillaVAE,
               'WAE_MMD':WAE_MMD,
@@ -29,4 +30,5 @@ vae_models = {'VanillaVAE':VanillaVAE,
               'DFCVAE':DFCVAE,
               'MSSIMVAE':MSSIMVAE,
               'FactorVAE':FactorVAE,
-              'CategoricalVAE':CategoricalVAE}
+              'CategoricalVAE':CategoricalVAE,
+              'JointVAE':JointVAE}

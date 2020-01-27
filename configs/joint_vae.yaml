@@ -1,12 +1,20 @@
 model_params:
-  name: 'CategoricalVAE'
+  name: 'JointVAE'
   in_channels: 3
   latent_dim: 512
   categorical_dim: 40
+  latent_min_capacity: 0.0
+  latent_max_capacity: 20.0
+  latent_gamma: 30.
+  latent_num_iter: 25000
+  categorical_min_capacity: 0.0
+  categorical_max_capacity: 20.0
+  categorical_gamma: 30.
+  categorical_num_iter: 25000
   temperature: 0.5
   anneal_rate: 0.00003
   anneal_interval: 100
-  alpha: 8.0
+  alpha: 20.0
 
 exp_params:
   dataset: celeba
@@ -24,5 +32,5 @@ trainer_params:
 
 logging_params:
   save_dir: "logs/"
-  name: "CategoricalVAE"
+  name: "JointVAE"
   manual_seed: 1265

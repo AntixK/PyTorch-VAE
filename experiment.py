@@ -205,7 +205,7 @@ class VAEXperiment(pl.LightningModule):
                                             transforms.ToTensor(),
                                             SetRange])
 
-        if self.params['dataset'] == 'cifar10':
+        elif self.params['dataset'] == 'cifar10':
             transform = transforms.Compose([transforms.RandomHorizontalFlip(),
                                             transforms.ToTensor(),
                                             transforms.Lambda(lambda img:
