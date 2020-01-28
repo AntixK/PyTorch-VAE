@@ -6,7 +6,7 @@ model_params:
   temperature: 0.5
   anneal_rate: 0.00003
   anneal_interval: 100
-  alpha: 8.0
+  alpha: 1.0
 
 exp_params:
   dataset: celeba

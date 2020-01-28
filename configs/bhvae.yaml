@@ -3,7 +3,7 @@ model_params:
   in_channels: 3
   latent_dim: 128
   loss_type: 'H'
-  gamma: 1000.0
+  gamma: 10.0
   max_capacity: 25
   Capacity_max_iter: 10000
 

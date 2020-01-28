@@ -12,6 +12,7 @@ from .mssim_vae import MSSIMVAE
 from .fvae import *
 from .cat_vae import *
 from .joint_vae import *
+from .info_vae import *
 
 # Aliases
 VAE = VanillaVAE
@@ -31,4 +32,5 @@ vae_models = {'VanillaVAE':VanillaVAE,
               'MSSIMVAE':MSSIMVAE,
               'FactorVAE':FactorVAE,
               'CategoricalVAE':CategoricalVAE,
-              'JointVAE':JointVAE}
+              'JointVAE':JointVAE,
+              'InfoVAE':InfoVAE}

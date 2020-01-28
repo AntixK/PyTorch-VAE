@@ -90,6 +90,7 @@ logging_params:
 | MSSIM VAE             |[Link](https://arxiv.org/abs/1511.06409)          |    ![][14]    | ![][13] |
 | Categorical VAE       |[Link](https://arxiv.org/abs/1611.01144)          |    ![][18]    | ![][17] |
 | Joint VAE             |[Link](https://arxiv.org/abs/1804.00104)          |    ![][20]    | ![][19] |
+| Info VAE              |[Link](https://arxiv.org/abs/1706.02262)          |    ![][22]    | ![][21] |
 
 <!-- | Gamma VAE             |[Link](https://arxiv.org/abs/1610.05683)          |    ![][16]    | ![][15] |-->
 <!--| Disentangled Beta-VAE |[Link](https://arxiv.org/abs/1804.03599)          |    ![][10]     | ![][9] |-->
@@ -106,12 +107,12 @@ logging_params:
 - [x] Conditional VAE
 - [x] Categorical VAE (Gumbel-Softmax VAE)
 - [x] Joint VAE
+- [ ] InfoVAE (in progress)
 - [ ] Gamma VAE (in progress)
 - [ ] Beta TC-VAE (in progress) 
 - [ ] Vamp VAE (in progress)
 - [ ] HVAE (VAE with Vamp Prior) (in progress)
 - [ ] FactorVAE (in progress)
-- [ ] InfoVAE
 - [ ] TwoStageVAE
 - [ ] VAE-GAN
 - [ ] VLAE
@@ -154,10 +155,10 @@ I would be happy to include your result (along with your config file) in this re
 [14]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_MSSIMVAE_29.png
 [15]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/ConditionalVAE_20.png
 [16]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_ConditionalVAE_20.png
-[17]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/CategoricalVAE_12.png
-[18]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_CategoricalVAE_12.png
-[19]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/JointVAE_6.png
-[20]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_JointVAE_6.png
+[17]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/CategoricalVAE_49.png
+[18]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_CategoricalVAE_49.png
+[19]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/JointVAE_49.png
+[20]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_JointVAE_49.png
 
 [python-image]: https://img.shields.io/badge/Python-3.5-ff69b4.svg
 [python-url]: https://www.python.org/
