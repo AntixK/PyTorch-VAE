@@ -109,12 +109,12 @@ logging_params:
 - [x] Categorical VAE (Gumbel-Softmax VAE)
 - [x] Joint VAE
 - [x] Disentangled beta-VAE
-- [ ] InfoVAE (in progress)
-- [ ] Gamma VAE (in progress)
-- [ ] Beta TC-VAE (in progress) 
+- [x] InfoVAE
+- [ ] Gamma VAE (in progress) 
 - [ ] Vamp VAE (in progress)
 - [ ] HVAE (VAE with Vamp Prior) (in progress)
 - [ ] FactorVAE (in progress)
+- [ ] Beta TC-VAE
 - [ ] TwoStageVAE
 - [ ] VAE-GAN
 - [ ] VLAE
@@ -141,7 +141,6 @@ I would be happy to include your result (along with your config file) in this re
 
 
 ### Citation
-if you wish to cite this repository in your work, use the following
 ```
 @misc{Subramanian2020,
   author = {Subramanian, A.K},
@@ -174,10 +173,10 @@ if you wish to cite this repository in your work, use the following
 [18]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_CategoricalVAE_49.png
 [19]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/JointVAE_49.png
 [20]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_JointVAE_49.png
-[21]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/BetaVAE_B_11.png
-[22]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_BetaVAE_B_11.png
-[23]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/InfoVAE_7.png
-[24]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_InfoVAE_7.png
+[21]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/BetaVAE_B_35.png
+[22]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_BetaVAE_B_35.png
+[23]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/InfoVAE_31.png
+[24]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_InfoVAE_31.png
 
 [python-image]: https://img.shields.io/badge/Python-3.5-ff69b4.svg
 [python-url]: https://www.python.org/
