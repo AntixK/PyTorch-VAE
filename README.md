@@ -85,15 +85,16 @@ logging_params:
 | WAE - MMD (RBF Kernel)|[Link](https://arxiv.org/abs/1711.01558)          |    ![][4]     | ![][3]  |
 | WAE - MMD (IMQ Kernel)|[Link](https://arxiv.org/abs/1711.01558)          |    ![][6]     | ![][5]  |
 | Beta-VAE              |[Link](https://openreview.net/forum?id=Sy2fzU9gl) |    ![][8]     | ![][7]  |
+| Disentangled Beta-VAE |[Link](https://arxiv.org/abs/1804.03599)          |    ![][22]    | ![][21] |
 | IWAE (5 Samples)      |[Link](https://arxiv.org/abs/1804.03599)          |    ![][10]    | ![][9]  |
 | DFCVAE                |[Link](https://arxiv.org/abs/1610.00291)          |    ![][12]    | ![][11] |
 | MSSIM VAE             |[Link](https://arxiv.org/abs/1511.06409)          |    ![][14]    | ![][13] |
 | Categorical VAE       |[Link](https://arxiv.org/abs/1611.01144)          |    ![][18]    | ![][17] |
 | Joint VAE             |[Link](https://arxiv.org/abs/1804.00104)          |    ![][20]    | ![][19] |
-| Info VAE              |[Link](https://arxiv.org/abs/1706.02262)          |    ![][22]    | ![][21] |
+| Info VAE              |[Link](https://arxiv.org/abs/1706.02262)          |    ![][24]    | ![][23] |
 
 <!-- | Gamma VAE             |[Link](https://arxiv.org/abs/1610.05683)          |    ![][16]    | ![][15] |-->
-<!--| Disentangled Beta-VAE |[Link](https://arxiv.org/abs/1804.03599)          |    ![][10]     | ![][9] |-->
+
 
 
 
@@ -107,6 +108,7 @@ logging_params:
 - [x] Conditional VAE
 - [x] Categorical VAE (Gumbel-Softmax VAE)
 - [x] Joint VAE
+- [x] Disentangled beta-VAE
 - [ ] InfoVAE (in progress)
 - [ ] Gamma VAE (in progress)
 - [ ] Beta TC-VAE (in progress) 
@@ -137,6 +139,19 @@ I would be happy to include your result (along with your config file) in this re
 | ✔️ Patent use     |                   |                                  |
 | ✔️ Private use    |                   |                                  |
 
+
+### Citation
+if you wish to cite this repository in your work, use the following
+```
+@misc{Subramanian2020,
+  author = {Subramanian, A.K},
+  title = {PyTorch-VAE},
+  year = {2020},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/AntixK/PyTorch-VAE}}
+}
+```
 -----------
 
 [1]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/Vanilla%20VAE_25.png
@@ -145,8 +160,8 @@ I would be happy to include your result (along with your config file) in this re
 [4]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_WAE_RBF_19.png
 [5]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/WAE_IMQ_15.png
 [6]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_WAE_IMQ_15.png
-[7]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/BetaVAE_B_20.png
-[8]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_BetaVAE_B_20.png
+[7]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/BetaVAE_H_20.png
+[8]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_BetaVAE_H_20.png
 [9]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/IWAE_19.png
 [10]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_IWAE_19.png
 [11]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/DFCVAE_49.png
@@ -159,6 +174,10 @@ I would be happy to include your result (along with your config file) in this re
 [18]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_CategoricalVAE_49.png
 [19]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/JointVAE_49.png
 [20]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_JointVAE_49.png
+[21]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/BetaVAE_B_11.png
+[22]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_BetaVAE_B_11.png
+[23]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/InfoVAE_7.png
+[24]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_InfoVAE_7.png
 
 [python-image]: https://img.shields.io/badge/Python-3.5-ff69b4.svg
 [python-url]: https://www.python.org/

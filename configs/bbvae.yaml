@@ -2,7 +2,7 @@ model_params:
   name: 'BetaVAE'
   in_channels: 3
   latent_dim: 128
-  loss_type: 'H'
+  loss_type: 'B'
   gamma: 10.0
   max_capacity: 25
   Capacity_max_iter: 10000
@@ -23,5 +23,5 @@ trainer_params:
 
 logging_params:
   save_dir: "logs/"
-  name: "BetaVAE_H"
+  name: "BetaVAE_B"
   manual_seed: 1265

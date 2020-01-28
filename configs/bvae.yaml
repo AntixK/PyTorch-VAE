@@ -3,7 +3,7 @@ model_params:
   in_channels: 3
   latent_dim: 128
   beta: 10
-  loss_type: 'B'
+  loss_type: 'H'
 
 exp_params:
   dataset: celeba
@@ -21,5 +21,5 @@ trainer_params:
 
 logging_params:
   save_dir: "logs/"
-  name: "BetaVAE_B"
+  name: "BetaVAE_H"
   manual_seed: 1265

@@ -12,6 +12,7 @@ class InfoVAE(BaseVAE):
                  latent_dim: int,
                  hidden_dims: List = None,
                  alpha: float = -0.5,
+                 beta: float = 5.0,
                  reg_weight: int = 100,
                  kernel_type: str = 'imq',
                  latent_var: float = 2.,
@@ -26,6 +27,7 @@ class InfoVAE(BaseVAE):
         assert alpha <= 0, 'alpha must be negative or zero.'
 
         self.alpha = alpha
+        self.beta = beta
 
         modules = []
         if hidden_dims is None:
@@ -140,7 +142,7 @@ class InfoVAE(BaseVAE):
         mmd_loss = self.compute_mmd(z)
         kld_loss = torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim=1), dim=0)
 
-        loss = recons_loss + \
+        loss = self.beta * recons_loss + \
                (1. - self.alpha) * kld_weight * kld_loss + \
                (self.alpha + self.reg_weight - 1.)/bias_corr * mmd_loss
         return {'loss': loss, 'Reconstruction_Loss':recons_loss, 'MMD': mmd_loss, 'KLD':-kld_loss}

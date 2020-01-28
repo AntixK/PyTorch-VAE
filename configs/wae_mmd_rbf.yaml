@@ -2,7 +2,7 @@ model_params:
   name: 'WAE_MMD'
   in_channels: 3
   latent_dim: 128
-  reg_weight: 1000
+  reg_weight: 5000
   kernel_type: 'rbf'
 
 exp_params:

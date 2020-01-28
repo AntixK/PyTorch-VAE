@@ -2,9 +2,10 @@ model_params:
   name: 'InfoVAE'
   in_channels: 3
   latent_dim: 128
-  reg_weight: 110  # Lambda factor
+  reg_weight: 110  # MMD weight
   kernel_type: 'imq'
-  alpha: -9.0
+  alpha: -9.0     # KLD weight
+  beta: 10.5      # Reconstruction weight
 
 exp_params:
   dataset: celeba
