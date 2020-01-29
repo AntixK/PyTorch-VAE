@@ -175,32 +175,30 @@ class FactorVAE(BaseVAE):
             self.D_z_reserve = self.discriminator(z)
             vae_tc_loss = (self.D_z_reserve[:, 0] - self.D_z_reserve[:, 1]).mean()
 
-            loss = recons_loss + kld_weight * kld_loss - self.gamma * vae_tc_loss
+            loss = recons_loss + kld_weight * kld_loss + self.gamma * vae_tc_loss
+
             # print(f' recons: {recons_loss}, kld: {kld_loss}, VAE_TC_loss: {vae_tc_loss}')
-            return {'loss': loss} #,
-                    # 'Reconstruction Loss':recons_loss,
-                    # 'KLD':-kld_loss,
-                    # 'VAE_TC Loss': vae_tc_loss}
+            return {'loss': loss,
+                    'Reconstruction_Loss':recons_loss,
+                    'KLD':-kld_loss,
+                    'VAE_TC_Loss': vae_tc_loss}
 
         # Update the Discriminator
         elif optimizer_idx == 1:
-
             device = input.device
             true_labels = torch.ones(input.size(0), dtype= torch.long,
                                      requires_grad=False).to(device)
             false_labels = torch.zeros(input.size(0), dtype= torch.long,
                                        requires_grad=False).to(device)
 
-            real_img2 = kwargs['secondary_input']
-
-            result = self.forward(real_img2)
-            z2 = result[4].detach() # Detach so that VAE is not trained again
-            z2_perm = self.permute_latent(z2)
-            D_z2_perm = self.discriminator(z2_perm)
-            D_tc_loss = -0.5 * (F.cross_entropy(self.D_z_reserve, false_labels) +
-                                F.cross_entropy(D_z2_perm, true_labels))
-            print(f'D_TC: {D_tc_loss}')
-            return {'loss': D_tc_loss}
+            z = z.detach() # Detach so that VAE is not trained again
+            z_perm = self.permute_latent(z)
+            D_z_perm = self.discriminator(z_perm)
+            D_tc_loss = 0.5 * (F.cross_entropy(self.D_z_reserve, false_labels) +
+                               F.cross_entropy(D_z_perm, true_labels))
+            # print(f'D_TC: {D_tc_loss}')
+            return {'loss': D_tc_loss,
+                    'D_TC_Loss':D_tc_loss}
 
     def sample(self,
                num_samples:int,

@@ -116,11 +116,9 @@ logging_params:
 - [ ] FactorVAE (in progress)
 - [ ] Beta TC-VAE
 - [ ] TwoStageVAE
-- [ ] VAE-GAN
 - [ ] VLAE
 - [ ] PixelVAE
 - [ ] VQVAE
-- [ ] StyleVAE
 - [ ] Sequential VAE
 
 

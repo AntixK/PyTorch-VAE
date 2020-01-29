@@ -6,13 +6,12 @@ from models.types_ import *
 import pytorch_lightning as pl
 from torchvision import transforms
 import torchvision.utils as vutils
-from torchvision.datasets import CelebA, CIFAR10
+from torchvision.datasets import CelebA
 from torch.utils.data import DataLoader
 
 
 
 class VAEXperiment(pl.LightningModule):
-    RETAIN_GRAPH = True
 
     def __init__(self,
                  vae_model: BaseVAE,
@@ -22,6 +21,11 @@ class VAEXperiment(pl.LightningModule):
         self.model = vae_model
         self.params = params
         self.curr_device = None
+        self.hold_graph = False
+        try:
+            self.hold_graph = self.params['retain_first_backpass']
+        except:
+            pass
 
     def forward(self, input: Tensor, **kwargs) -> Tensor:
         return self.model(input, **kwargs)
@@ -99,11 +103,11 @@ class VAEXperiment(pl.LightningModule):
 
         del test_input, recons, samples
 
-    # def backward(self, use_amp, loss, optimizer):
-    #     print('called during backward')
-    #
-    #     loss.backward(retain_graph = self.RETAIN_GRAPH)
-    #     RETAIN_GRAP
+    def backward(self, use_amp, loss, optimizer, optimizer_idx):
+        if self.hold_graph and optimizer_idx == 0:
+            loss.backward(retain_graph = True)
+        else:
+            loss.backward(retain_graph = False)
 
     def configure_optimizers(self):
 
@@ -150,14 +154,6 @@ class VAEXperiment(pl.LightningModule):
                              split = "train",
                              transform=transform,
                              download=False)
-        # Required for Categorical VAE
-        elif self.params['dataset'] == 'cifar10':
-            target_transforms = self.target_transforms()
-            dataset = CIFAR10(root = self.params['data_path'],
-                              train = True,
-                              transform=transform,
-                              target_transform=target_transforms,
-                              download=False)
         else:
             raise ValueError('Undefined dataset type')
 
@@ -179,17 +175,6 @@ class VAEXperiment(pl.LightningModule):
                                                  batch_size= self.params['batch_size'],
                                                  shuffle = True,
                                                  drop_last=True)
-
-        elif self.params['dataset'] == 'cifar10':
-            target_transforms = self.target_transforms()
-            self.sample_dataloader =  DataLoader(CIFAR10(root = self.params['data_path'],
-                                                         train = False,
-                                                         transform=transform,
-                                                         target_transform=target_transforms,
-                                                         download=False),
-                                                 batch_size= self.params['batch_size'],
-                                                 shuffle = True,
-                                                 drop_last=True)
         else:
             raise ValueError('Undefined dataset type')
         return self.sample_dataloader
@@ -204,28 +189,7 @@ class VAEXperiment(pl.LightningModule):
                                             transforms.Resize(self.params['img_size']),
                                             transforms.ToTensor(),
                                             SetRange])
-
-        elif self.params['dataset'] == 'cifar10':
-            transform = transforms.Compose([transforms.RandomHorizontalFlip(),
-                                            transforms.ToTensor(),
-                                            transforms.Lambda(lambda img:
-                                                              torch.nn.functional.upsample_bilinear(
-                                                                  img.unsqueeze(0),
-                                                                  self.params['img_size']).squeeze()
-                                                              ),
-                                            SetRange])
         else:
             raise ValueError('Undefined dataset type')
         return transform
-
-    def target_transforms(self):
-        transform = transforms.Compose([transforms.Lambda(lambda labels:
-                                                          torch.zeros(1, 10).scatter_(1,
-                                                                                      torch.tensor(labels).view(-1, 1),
-                                                                                      1)
-                                                          )
-                                        ])
-
-        # return transform
-
 
