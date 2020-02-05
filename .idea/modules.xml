@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/PyTorch-VAE.iml" filepath="$PROJECT_DIR$/.idea/PyTorch-VAE.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../Project_S/somic_research/.idea/somic_research.iml" filepath="$PROJECT_DIR$/../Project_S/somic_research/.idea/somic_research.iml" />
     </modules>
   </component>
 </project>

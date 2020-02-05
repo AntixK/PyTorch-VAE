@@ -86,7 +86,7 @@ logging_params:
 | WAE - MMD (IMQ Kernel)|[Link](https://arxiv.org/abs/1711.01558)          |    ![][6]     | ![][5]  |
 | Beta-VAE              |[Link](https://openreview.net/forum?id=Sy2fzU9gl) |    ![][8]     | ![][7]  |
 | Disentangled Beta-VAE |[Link](https://arxiv.org/abs/1804.03599)          |    ![][22]    | ![][21] |
-| IWAE (5 Samples)      |[Link](https://arxiv.org/abs/1804.03599)          |    ![][10]    | ![][9]  |
+| IWAE (5 Samples)      |[Link](https://arxiv.org/abs/1509.00519)          |    ![][10]    | ![][9]  |
 | DFCVAE                |[Link](https://arxiv.org/abs/1610.00291)          |    ![][12]    | ![][11] |
 | MSSIM VAE             |[Link](https://arxiv.org/abs/1511.06409)          |    ![][14]    | ![][13] |
 | Categorical VAE       |[Link](https://arxiv.org/abs/1611.01144)          |    ![][18]    | ![][17] |
@@ -113,10 +113,7 @@ logging_params:
 - [ ] Gamma VAE (in progress) 
 - [ ] Vamp VAE (in progress)
 - [ ] HVAE (VAE with Vamp Prior) (in progress)
-- [ ] FactorVAE (in progress)
 - [ ] Beta TC-VAE
-- [ ] TwoStageVAE
-- [ ] VLAE
 - [ ] PixelVAE
 - [ ] VQVAE
 - [ ] Sequential VAE

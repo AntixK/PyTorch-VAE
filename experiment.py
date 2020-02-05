@@ -35,20 +35,9 @@ class VAEXperiment(pl.LightningModule):
         self.curr_device = real_img.device
 
         results = self.forward(real_img, labels = labels)
-
-        real_img2 = None
-        try:
-            # Required for factor VAE
-            if self.params['require_secondary_input']:
-                real_img2,_ = next(iter(self.sample_dataloader))
-                real_img2 = real_img.to(self.curr_device)
-        except:
-            pass
-
         train_loss = self.model.loss_function(*results,
                                               M_N = self.params['batch_size']/ self.num_train_imgs,
                                               optimizer_idx=optimizer_idx,
-                                              secondary_input = real_img2,
                                               batch_idx = batch_idx)
 
         self.logger.experiment.log({key: val.item() for key, val in train_loss.items()})
@@ -84,12 +73,12 @@ class VAEXperiment(pl.LightningModule):
                           f"recons_{self.logger.name}_{self.current_epoch}.png",
                           normalize=True,
                           nrow=int(math.sqrt(self.params['batch_size'])))
-
-        vutils.save_image(test_input.data,
-                          f"{self.logger.save_dir}{self.logger.name}/version_{self.logger.version}/"
-                          f"real_img_{self.logger.name}_{self.current_epoch}.png",
-                          normalize=True,
-                          nrow=int(math.sqrt(self.params['batch_size'])))
+        #
+        # vutils.save_image(test_input.data,
+        #                   f"{self.logger.save_dir}{self.logger.name}/version_{self.logger.version}/"
+        #                   f"real_img_{self.logger.name}_{self.current_epoch}.png",
+        #                   normalize=True,
+        #                   nrow=int(math.sqrt(self.params['batch_size'])))
 
         samples = self.model.sample(self.params['batch_size'],
                                     self.curr_device,

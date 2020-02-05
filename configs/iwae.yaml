@@ -2,6 +2,7 @@ model_params:
   name: 'IWAE'
   in_channels: 3
   latent_dim: 128
+  num_samples: 5
 
 exp_params:
   dataset: celeba
@@ -19,5 +20,5 @@ trainer_params:
 
 logging_params:
   save_dir: "logs/"
-  name: "IWAE_rerun"
+  name: "IWAE"
   manual_seed: 1265

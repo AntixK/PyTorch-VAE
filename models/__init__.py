@@ -13,6 +13,8 @@ from .fvae import *
 from .cat_vae import *
 from .joint_vae import *
 from .info_vae import *
+# from .twostage_vae import *
+from .lvae import LVAE
 
 # Aliases
 VAE = VanillaVAE
