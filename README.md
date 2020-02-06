@@ -92,6 +92,7 @@ logging_params:
 | Categorical VAE       |[Link](https://arxiv.org/abs/1611.01144)          |    ![][18]    | ![][17] |
 | Joint VAE             |[Link](https://arxiv.org/abs/1804.00104)          |    ![][20]    | ![][19] |
 | Info VAE              |[Link](https://arxiv.org/abs/1706.02262)          |    ![][24]    | ![][23] |
+| LogCosh VAE           |[Link](https://openreview.net/forum?id=rkglvsC9Ym)|    ![][26]    | ![][25] |
 
 <!-- | Gamma VAE             |[Link](https://arxiv.org/abs/1610.05683)          |    ![][16]    | ![][15] |-->
 
@@ -110,6 +111,7 @@ logging_params:
 - [x] Joint VAE
 - [x] Disentangled beta-VAE
 - [x] InfoVAE
+- [x] LogCosh VAE
 - [ ] Gamma VAE (in progress) 
 - [ ] Vamp VAE (in progress)
 - [ ] HVAE (VAE with Vamp Prior) (in progress)
@@ -172,6 +174,8 @@ I would be happy to include your result (along with your config file) in this re
 [22]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_BetaVAE_B_35.png
 [23]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/InfoVAE_31.png
 [24]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_InfoVAE_31.png
+[25]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/LogCoshVAE_7.png
+[26]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_LogCoshVAE_7.png
 
 [python-image]: https://img.shields.io/badge/Python-3.5-ff69b4.svg
 [python-url]: https://www.python.org/

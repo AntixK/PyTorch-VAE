@@ -1,20 +1,24 @@
 import torch
+import torch.nn.functional as F
 from models import BaseVAE
 from torch import nn
-from torch.nn import functional as F
 from .types_ import *
 
 
-class VanillaVAE(BaseVAE):
+class LogCoshVAE(BaseVAE):
 
     def __init__(self,
                  in_channels: int,
                  latent_dim: int,
                  hidden_dims: List = None,
+                 alpha: float = 100.,
+                 beta: float = 10.,
                  **kwargs) -> None:
-        super(VanillaVAE, self).__init__()
+        super(LogCoshVAE, self).__init__()
 
         self.latent_dim = latent_dim
+        self.alpha = alpha
+        self.beta = beta
 
         modules = []
         if hidden_dims is None:
@@ -55,8 +59,6 @@ class VanillaVAE(BaseVAE):
                     nn.BatchNorm2d(hidden_dims[i + 1]),
                     nn.LeakyReLU())
             )
-
-
 
         self.decoder = nn.Sequential(*modules)
 
@@ -136,12 +138,20 @@ class VanillaVAE(BaseVAE):
         log_var = args[3]
 
         kld_weight = kwargs['M_N'] # Account for the minibatch samples from the dataset
-        recons_loss =F.mse_loss(recons, input)
+        t = recons - input
+        # recons_loss = F.mse_loss(recons, input)
+        # cosh = torch.cosh(self.alpha * t)
+        # recons_loss = (1./self.alpha * torch.log(cosh)).mean()
 
+        recons_loss = self.alpha * t + \
+                      torch.log(1. + torch.exp(- 2 * self.alpha * t)) - \
+                      torch.log(torch.tensor(2.0))
+        # print(self.alpha* t.max(), self.alpha*t.min())
+        recons_loss = (1. / self.alpha) * recons_loss.mean()
 
         kld_loss = torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim = 1), dim = 0)
 
-        loss = recons_loss + kld_weight * kld_loss
+        loss = recons_loss + self.beta * kld_weight * kld_loss
         return {'loss': loss, 'Reconstruction_Loss':recons_loss, 'KLD':-kld_loss}
 
     def sample(self,
@@ -157,12 +167,7 @@ class VanillaVAE(BaseVAE):
         z = torch.randn(num_samples,
                         self.latent_dim)
 
-        z = z.to(current_device)        #
-        # vutils.save_image(test_input.data,
-        #                   f"{self.logger.save_dir}{self.logger.name}/version_{self.logger.version}/"
-        #                   f"real_img_{self.logger.name}_{self.current_epoch}.png",
-        #                   normalize=True,
-        #                   nrow=int(math.sqrt(self.params['batch_size'])))
+        z = z.to(current_device)
 
         samples = self.decode(z)
         return samples

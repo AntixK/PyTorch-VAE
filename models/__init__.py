@@ -15,6 +15,7 @@ from .joint_vae import *
 from .info_vae import *
 # from .twostage_vae import *
 from .lvae import LVAE
+from .logcosh_vae import *
 
 # Aliases
 VAE = VanillaVAE
@@ -35,4 +36,5 @@ vae_models = {'VanillaVAE':VanillaVAE,
               'FactorVAE':FactorVAE,
               'CategoricalVAE':CategoricalVAE,
               'JointVAE':JointVAE,
-              'InfoVAE':InfoVAE}
+              'InfoVAE':InfoVAE,
+              'LogCoshVAE':LogCoshVAE}

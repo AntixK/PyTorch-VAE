@@ -73,12 +73,12 @@ class VAEXperiment(pl.LightningModule):
                           f"recons_{self.logger.name}_{self.current_epoch}.png",
                           normalize=True,
                           nrow=int(math.sqrt(self.params['batch_size'])))
-        #
-        # vutils.save_image(test_input.data,
-        #                   f"{self.logger.save_dir}{self.logger.name}/version_{self.logger.version}/"
-        #                   f"real_img_{self.logger.name}_{self.current_epoch}.png",
-        #                   normalize=True,
-        #                   nrow=int(math.sqrt(self.params['batch_size'])))
+
+        vutils.save_image(test_input.data,
+                          f"{self.logger.save_dir}{self.logger.name}/version_{self.logger.version}/"
+                          f"real_img_{self.logger.name}_{self.current_epoch}.png",
+                          normalize=True,
+                          nrow=int(math.sqrt(self.params['batch_size'])))
 
         samples = self.model.sample(self.params['batch_size'],
                                     self.curr_device,
@@ -92,11 +92,6 @@ class VAEXperiment(pl.LightningModule):
 
         del test_input, recons, samples
 
-    def backward(self, use_amp, loss, optimizer, optimizer_idx):
-        if self.hold_graph and optimizer_idx == 0:
-            loss.backward(retain_graph = True)
-        else:
-            loss.backward(retain_graph = False)
 
     def configure_optimizers(self):
 
@@ -177,6 +172,7 @@ class VAEXperiment(pl.LightningModule):
                                             transforms.CenterCrop(148),
                                             transforms.Resize(self.params['img_size']),
                                             transforms.ToTensor(),
+                                            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
                                             SetRange])
         else:
             raise ValueError('Undefined dataset type')
