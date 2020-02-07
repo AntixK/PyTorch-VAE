@@ -78,29 +78,25 @@ logging_params:
 </h2>
 
 
-| Model                                    | Paper                                            |Reconstruction | Samples |
-|------------------------------------------|--------------------------------------------------|---------------|---------|
-| VAE ([Code][vae_code])                   |[Link](https://arxiv.org/abs/1312.6114)           |    ![][2]     | ![][1]  |
-| Conditional VAE ([Code][cvae_code] )     |[Link](https://openreview.net/forum?id=rJWXGDWd-H)|    ![][16]    | ![][15] |
-| WAE - MMD (RBF Kernel) ([Code][wae_code])|[Link](https://arxiv.org/abs/1711.01558)          |    ![][4]     | ![][3]  |
-| WAE - MMD (IMQ Kernel) ([Code][wae_code])|[Link](https://arxiv.org/abs/1711.01558)          |    ![][6]     | ![][5]  |
-| Beta-VAE ([Code][bvae_code])             |[Link](https://openreview.net/forum?id=Sy2fzU9gl) |    ![][8]     | ![][7]  |
-| Disentangled Beta-VAE ([Code][bvae_code])|[Link](https://arxiv.org/abs/1804.03599)          |    ![][22]    | ![][21] |
-| IWAE (5 Samples) ([Code][iwae_code])     |[Link](https://arxiv.org/abs/1509.00519)          |    ![][10]    | ![][9]  |
-| DFCVAE   ([Code][dfcvae_code])           |[Link](https://arxiv.org/abs/1610.00291)          |    ![][12]    | ![][11] |
-| MSSIM VAE    ([Code][mssimvae_code])     |[Link](https://arxiv.org/abs/1511.06409)          |    ![][14]    | ![][13] |
-| Categorical VAE   ([Code][catvae_code])  |[Link](https://arxiv.org/abs/1611.01144)          |    ![][18]    | ![][17] |
-| Joint VAE ([Code][jointvae_code])        |[Link](https://arxiv.org/abs/1804.00104)          |    ![][20]    | ![][19] |
-| Info VAE   ([Code][infovae_code])        |[Link](https://arxiv.org/abs/1706.02262)          |    ![][24]    | ![][23] |
-| LogCosh VAE   ([Code][logcoshvae_code])  |[Link](https://openreview.net/forum?id=rkglvsC9Ym)|    ![][26]    | ![][25] |
-| SWAE (50 Projections) ([Code][swae_code])|[Link](https://arxiv.org/abs/1804.01947)          |    ![][28]    | ![][27] |
-
+| Model                                                                | Paper                                            |Reconstruction | Samples |
+|----------------------------------------------------------------------|-------------------------------------------------|---------------|---------|
+| VAE ([Code][vae_code], [Config][vae_config])                         |[Link](https://arxiv.org/abs/1312.6114)           |    ![][2]     | ![][1]  |
+| Conditional VAE ([Code][cvae_code], [Config][cvae_config])           |[Link](https://openreview.net/forum?id=rJWXGDWd-H)|    ![][16]    | ![][15] |
+| WAE - MMD (RBF Kernel) ([Code][wae_code], [Config][wae_rbf_config])  |[Link](https://arxiv.org/abs/1711.01558)          |    ![][4]     | ![][3]  |
+| WAE - MMD (IMQ Kernel) ([Code][wae_code], [Config][wae_imq_config])  |[Link](https://arxiv.org/abs/1711.01558)          |    ![][6]     | ![][5]  |
+| Beta-VAE ([Code][bvae_code], [Config][bbvae_config])                 |[Link](https://openreview.net/forum?id=Sy2fzU9gl) |    ![][8]     | ![][7]  |
+| Disentangled Beta-VAE ([Code][bvae_code], [Config][bhvae_config])    |[Link](https://arxiv.org/abs/1804.03599)          |    ![][22]    | ![][21] |
+| IWAE (5 Samples) ([Code][iwae_code], [Config][iwae_config])          |[Link](https://arxiv.org/abs/1509.00519)          |    ![][10]    | ![][9]  |
+| DFCVAE   ([Code][dfcvae_code], [Config][dfcvae_config])              |[Link](https://arxiv.org/abs/1610.00291)          |    ![][12]    | ![][11] |
+| MSSIM VAE    ([Code][mssimvae_code], [Config][mssimvae_config])      |[Link](https://arxiv.org/abs/1511.06409)          |    ![][14]    | ![][13] |
+| Categorical VAE   ([Code][catvae_code], [Config][catvae_config])     |[Link](https://arxiv.org/abs/1611.01144)          |    ![][18]    | ![][17] |
+| Joint VAE ([Code][jointvae_code], [Config][jointvae_config])         |[Link](https://arxiv.org/abs/1804.00104)          |    ![][20]    | ![][19] |
+| Info VAE   ([Code][infovae_code], [Config][infovae_config])          |[Link](https://arxiv.org/abs/1706.02262)          |    ![][24]    | ![][23] |
+| LogCosh VAE   ([Code][logcoshvae_code], [Config][logcoshvae_config]) |[Link](https://openreview.net/forum?id=rkglvsC9Ym)|    ![][26]    | ![][25] |
+| SWAE (50 Projections) ([Code][swae_code], [Config][swae_config])     |[Link](https://arxiv.org/abs/1804.01947)          |    ![][28]    | ![][27] |
 
 
 <!-- | Gamma VAE             |[Link](https://arxiv.org/abs/1610.05683)          |    ![][16]    | ![][15] |-->
-
-
-
 
 ### TODO
 - [x] VanillaVAE
@@ -167,7 +163,20 @@ I would be happy to include your result (along with your config file) in this re
 [catvae_code]: https://github.com/AntixK/PyTorch-VAE/blob/master/models/cat_vae.py
 [infovae_code]: https://github.com/AntixK/PyTorch-VAE/blob/master/models/info_vae.py
 
-
+[vae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/vae.yaml
+[cvae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/cvae.yaml
+[bbvae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/bbvae.yaml
+[bhvae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/bhvae.yaml
+[wae_rbf_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/wae_mmd_rbf.yaml
+[wae_img_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/wae_mmd_imq.yaml
+[iwae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/iwae.yaml
+[swae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/swae.yaml
+[jointvae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/joint_vae.yaml
+[dfcvae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/dfc_vae.yaml
+[mssimvae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/mssim_vae.yaml
+[logcoshvae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/logcosh_vae.yaml
+[catvae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/cat_vae.yaml
+[infovae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/infovae.yaml
 
 [1]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/Vanilla%20VAE_25.png
 [2]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_Vanilla%20VAE_25.png
