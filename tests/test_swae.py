@@ -1,14 +1,13 @@
 import torch
 import unittest
-from models import LVAE
+from models import SWAE
 from torchsummary import summary
 
 
-class TestLVAE(unittest.TestCase):
+class TestSWAE(unittest.TestCase):
 
     def setUp(self) -> None:
-        # self.model2 = VAE(3, 10)
-        self.model = LVAE(3, [4,8,16,32,128], hidden_dims=[32, 64,128, 256, 512])
+        self.model = SWAE(3, 10, reg_weight = 100)
 
     def test_summary(self):
         print(summary(self.model, (3, 64, 64), device='cpu'))
@@ -17,7 +16,6 @@ class TestLVAE(unittest.TestCase):
     def test_forward(self):
         x = torch.randn(16, 3, 64, 64)
         y = self.model(x)
-
         print("Model Output size:", y[0].size())
         # print("Model2 Output size:", self.model2(x)[0].size())
 
@@ -25,13 +23,8 @@ class TestLVAE(unittest.TestCase):
         x = torch.randn(16, 3, 64, 64)
 
         result = self.model(x)
-        loss = self.model.loss_function(*result, M_N = 0.005)
+        loss = self.model.loss_function(*result)
         print(loss)
-
-    def test_sample(self):
-        self.model.cuda()
-        y = self.model.sample(144, 0)
-        print(y.shape)
 
 
 if __name__ == '__main__':

@@ -166,6 +166,7 @@ class VAEXperiment(pl.LightningModule):
     def data_transforms(self):
 
         SetRange = transforms.Lambda(lambda X: 2 * X - 1.)
+        SetScale = transforms.Lambda(lambda X: X/X.sum(0).expand_as(X))
 
         if self.params['dataset'] == 'celeba':
             transform = transforms.Compose([transforms.RandomHorizontalFlip(),
