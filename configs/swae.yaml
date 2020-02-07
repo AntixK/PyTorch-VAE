@@ -2,8 +2,10 @@ model_params:
   name: 'SWAE'
   in_channels: 3
   latent_dim: 128
-  reg_weight: 100
+  reg_weight: 10
   wasserstein_deg: 2.0
+  num_projections: 100
+  projection_dist: "cauchy"
 
 exp_params:
   dataset: celeba

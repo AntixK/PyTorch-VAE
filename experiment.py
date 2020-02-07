@@ -173,7 +173,6 @@ class VAEXperiment(pl.LightningModule):
                                             transforms.CenterCrop(148),
                                             transforms.Resize(self.params['img_size']),
                                             transforms.ToTensor(),
-                                            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
                                             SetRange])
         else:
             raise ValueError('Undefined dataset type')

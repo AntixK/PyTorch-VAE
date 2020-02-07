@@ -2,6 +2,7 @@ import torch
 from models import BaseVAE
 from torch import nn
 from torch.nn import functional as F
+from torch import distributions as dist
 from .types_ import *
 
 
@@ -13,12 +14,16 @@ class SWAE(BaseVAE):
                  hidden_dims: List = None,
                  reg_weight: int = 100,
                  wasserstein_deg: float= 2.,
+                 num_projections: int = 50,
+                 projection_dist: str = 'normal',
                     **kwargs) -> None:
         super(SWAE, self).__init__()
 
         self.latent_dim = latent_dim
         self.reg_weight = reg_weight
         self.p = wasserstein_deg
+        self.num_projections = num_projections
+        self.proj_dist = projection_dist
 
         modules = []
         if hidden_dims is None:
@@ -121,74 +126,6 @@ class SWAE(BaseVAE):
         loss = recons_loss_l2 + recons_loss_l1 + swd_loss
         return {'loss': loss, 'Reconstruction_Loss':(recons_loss_l2 + recons_loss_l1), 'SWD': swd_loss}
 
-    def compute_kernel(self,
-                       x1: Tensor,
-                       x2: Tensor) -> Tensor:
-        # Convert the tensors into row and column vectors
-        D = x1.size(1)
-        N = x1.size(0)
-
-        x1 = x1.unsqueeze(-2) # Make it into a column tensor
-        x2 = x2.unsqueeze(-3) # Make it into a row tensor
-
-        """
-        Usually the below lines are not required, especially in our case,
-        but this is useful when x1 and x2 have different sizes
-        along the 0th dimension.
-        """
-        x1 = x1.expand(N, N, D)
-        x2 = x2.expand(N, N, D)
-
-        if self.kernel_type == 'rbf':
-            result = self.compute_rbf(x1, x2)
-        elif self.kernel_type == 'imq':
-            result = self.compute_inv_mult_quad(x1, x2)
-        else:
-            raise ValueError('Undefined kernel type.')
-
-        return result
-
-
-    def compute_rbf(self,
-                    x1: Tensor,
-                    x2: Tensor,
-                    eps: float = 1e-7) -> Tensor:
-        """
-        Computes the RBF Kernel between x1 and x2.
-        :param x1: (Tensor)
-        :param x2: (Tensor)
-        :param eps: (Float)
-        :return:
-        """
-        z_dim = x2.size(-1)
-        sigma = 2. * z_dim * self.z_var
-
-        result = torch.exp(-((x1 - x2).pow(2).mean(-1) / sigma))
-        return result
-
-    def compute_inv_mult_quad(self,
-                               x1: Tensor,
-                               x2: Tensor,
-                               eps: float = 1e-7) -> Tensor:
-        """
-        Computes the Inverse Multi-Quadratics Kernel between x1 and x2,
-        given by
-
-                k(x_1, x_2) = \sum \frac{C}{C + \|x_1 - x_2 \|^2}
-        :param x1: (Tensor)
-        :param x2: (Tensor)
-        :param eps: (Float)
-        :return:
-        """
-        z_dim = x2.size(-1)
-        C = 2 * z_dim * self.z_var
-        kernel = C / (eps + C + (x1 - x2).pow(2).sum(dim = -1))
-
-        # Exclude diagonal elements
-        result = kernel.sum() - kernel.diag().sum()
-
-        return result
-
     def get_random_projections(self, latent_dim: int, num_samples: int) -> Tensor:
         """
         Returns random samples from latent distribution's (Gaussian)
@@ -199,7 +136,14 @@ class SWAE(BaseVAE):
         :param num_samples: (Int) Number of samples required (S)
         :return: Random projections from the latent unit sphere
         """
-        rand_samples = torch.randn(num_samples, latent_dim)
+        if self.proj_dist == 'normal':
+            rand_samples = torch.randn(num_samples, latent_dim)
+        elif self.proj_dist == 'cauchy':
+            rand_samples = dist.Cauchy(torch.tensor([0.0]),
+                                       torch.tensor([1.0])).sample((num_samples, latent_dim)).squeeze()
+        else:
+            raise ValueError('Unknown projection distribution.')
+
         rand_proj = rand_samples / rand_samples.norm(dim=1).view(-1,1)
         return rand_proj # [S x D]
 
@@ -222,7 +166,7 @@ class SWAE(BaseVAE):
         device = z.device
 
         proj_matrix = self.get_random_projections(self.latent_dim,
-                                                  num_samples=50).transpose(0,1).to(device)
+                                                  num_samples=self.num_projections).transpose(0,1).to(device)
 
         latent_projections = z.matmul(proj_matrix) # [N x S]
         prior_projections = prior_z.matmul(proj_matrix) # [N x S]
@@ -233,19 +177,6 @@ class SWAE(BaseVAE):
                  torch.sort(prior_projections.t(), dim=1)[0]
         w_dist = w_dist.pow(p)
         return reg_weight * w_dist.mean()
-
-    def compute_mmd(self, z: Tensor, reg_weight: float) -> Tensor:
-        # Sample from prior (Gaussian) distribution
-        prior_z = torch.randn_like(z)
-
-        prior_z__kernel = self.compute_kernel(prior_z, prior_z)
-        z__kernel = self.compute_kernel(z, z)
-        priorz_z__kernel = self.compute_kernel(prior_z, z)
-
-        mmd = reg_weight * prior_z__kernel.mean() + \
-              reg_weight * z__kernel.mean() - \
-              2 * reg_weight * priorz_z__kernel.mean()
-        return mmd
 
     def sample(self,
                num_samples:int,

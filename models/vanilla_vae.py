@@ -157,12 +157,7 @@ class VanillaVAE(BaseVAE):
         z = torch.randn(num_samples,
                         self.latent_dim)
 
-        z = z.to(current_device)        #
-        # vutils.save_image(test_input.data,
-        #                   f"{self.logger.save_dir}{self.logger.name}/version_{self.logger.version}/"
-        #                   f"real_img_{self.logger.name}_{self.current_epoch}.png",
-        #                   normalize=True,
-        #                   nrow=int(math.sqrt(self.params['batch_size'])))
+        z = z.to(current_device)
 
         samples = self.decode(z)
         return samples
