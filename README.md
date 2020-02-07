@@ -168,7 +168,7 @@ I would be happy to include your result (along with your config file) in this re
 [bbvae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/bbvae.yaml
 [bhvae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/bhvae.yaml
 [wae_rbf_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/wae_mmd_rbf.yaml
-[wae_img_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/wae_mmd_imq.yaml
+[wae_imq_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/wae_mmd_imq.yaml
 [iwae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/iwae.yaml
 [swae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/swae.yaml
 [jointvae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/joint_vae.yaml
