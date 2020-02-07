@@ -80,20 +80,20 @@ logging_params:
 
 | Model                               | Paper                                            |Reconstruction | Samples |
 |-------------------------------------|--------------------------------------------------|---------------|---------|
-| VAE ![][vae_code]                   |[Link](https://arxiv.org/abs/1312.6114)           |    ![][2]     | ![][1]  |
-| Conditional VAE ![][cvae_code]      |[Link](https://openreview.net/forum?id=rJWXGDWd-H)|    ![][16]    | ![][15] |
-| WAE - MMD (RBF Kernel) ![][wae_code]|[Link](https://arxiv.org/abs/1711.01558)          |    ![][4]     | ![][3]  |
-| WAE - MMD (IMQ Kernel) ![][wae_code]|[Link](https://arxiv.org/abs/1711.01558)          |    ![][6]     | ![][5]  |
-| Beta-VAE ![][bvae_code]             |[Link](https://openreview.net/forum?id=Sy2fzU9gl) |    ![][8]     | ![][7]  |
-| Disentangled Beta-VAE ![][bvae_code]|[Link](https://arxiv.org/abs/1804.03599)          |    ![][22]    | ![][21] |
-| IWAE (5 Samples) ![][iwae_code]     |[Link](https://arxiv.org/abs/1509.00519)          |    ![][10]    | ![][9]  |
-| DFCVAE   ![][dfcvae_code]           |[Link](https://arxiv.org/abs/1610.00291)          |    ![][12]    | ![][11] |
-| MSSIM VAE    ![][mssimvae_code]     |[Link](https://arxiv.org/abs/1511.06409)          |    ![][14]    | ![][13] |
-| Categorical VAE   ![][catvae_code]  |[Link](https://arxiv.org/abs/1611.01144)          |    ![][18]    | ![][17] |
-| Joint VAE ![][jointvae_code]        |[Link](https://arxiv.org/abs/1804.00104)          |    ![][20]    | ![][19] |
-| Info VAE   ![][infovae_code]        |[Link](https://arxiv.org/abs/1706.02262)          |    ![][24]    | ![][23] |
-| LogCosh VAE   ![][logcoshvae_code]  |[Link](https://openreview.net/forum?id=rkglvsC9Ym)|    ![][26]    | ![][25] |
-| SWAE (50 Projections) ![][swae_code]|[Link](https://arxiv.org/abs/1804.01947)          |    ![][28]    | ![][27] |
+| VAE [vae_code]                   |[Link](https://arxiv.org/abs/1312.6114)           |    ![][2]     | ![][1]  |
+| Conditional VAE [cvae_code]      |[Link](https://openreview.net/forum?id=rJWXGDWd-H)|    ![][16]    | ![][15] |
+| WAE - MMD (RBF Kernel) [wae_code]|[Link](https://arxiv.org/abs/1711.01558)          |    ![][4]     | ![][3]  |
+| WAE - MMD (IMQ Kernel) [wae_code]|[Link](https://arxiv.org/abs/1711.01558)          |    ![][6]     | ![][5]  |
+| Beta-VAE [bvae_code]             |[Link](https://openreview.net/forum?id=Sy2fzU9gl) |    ![][8]     | ![][7]  |
+| Disentangled Beta-VAE [bvae_code]|[Link](https://arxiv.org/abs/1804.03599)          |    ![][22]    | ![][21] |
+| IWAE (5 Samples) [iwae_code]     |[Link](https://arxiv.org/abs/1509.00519)          |    ![][10]    | ![][9]  |
+| DFCVAE   [dfcvae_code]           |[Link](https://arxiv.org/abs/1610.00291)          |    ![][12]    | ![][11] |
+| MSSIM VAE    [mssimvae_code]     |[Link](https://arxiv.org/abs/1511.06409)          |    ![][14]    | ![][13] |
+| Categorical VAE   [catvae_code]  |[Link](https://arxiv.org/abs/1611.01144)          |    ![][18]    | ![][17] |
+| Joint VAE [jointvae_code]        |[Link](https://arxiv.org/abs/1804.00104)          |    ![][20]    | ![][19] |
+| Info VAE   [infovae_code]        |[Link](https://arxiv.org/abs/1706.02262)          |    ![][24]    | ![][23] |
+| LogCosh VAE   [logcoshvae_code]  |[Link](https://openreview.net/forum?id=rkglvsC9Ym)|    ![][26]    | ![][25] |
+| SWAE (50 Projections) [swae_code]|[Link](https://arxiv.org/abs/1804.01947)          |    ![][28]    | ![][27] |
 
 
 
