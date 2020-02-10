@@ -74,11 +74,11 @@ class VAEXperiment(pl.LightningModule):
                           normalize=True,
                           nrow=int(math.sqrt(self.params['batch_size'])))
 
-        vutils.save_image(test_input.data,
-                          f"{self.logger.save_dir}{self.logger.name}/version_{self.logger.version}/"
-                          f"real_img_{self.logger.name}_{self.current_epoch}.png",
-                          normalize=True,
-                          nrow=int(math.sqrt(self.params['batch_size'])))
+        # vutils.save_image(test_input.data,
+        #                   f"{self.logger.save_dir}{self.logger.name}/version_{self.logger.version}/"
+        #                   f"real_img_{self.logger.name}_{self.current_epoch}.png",
+        #                   normalize=True,
+        #                   nrow=int(math.sqrt(self.params['batch_size'])))
 
         samples = self.model.sample(self.params['batch_size'],
                                     self.curr_device,

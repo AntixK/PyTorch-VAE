@@ -4,7 +4,7 @@ model_params:
   latent_dim: 128
   reg_weight: 100
   wasserstein_deg: 2.0
-  num_projections: 100
+  num_projections: 200
   projection_dist: "normal" #"cauchy"
 
 exp_params:
