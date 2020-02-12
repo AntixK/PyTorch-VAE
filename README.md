@@ -86,14 +86,15 @@ logging_params:
 | WAE - MMD (IMQ Kernel) ([Code][wae_code], [Config][wae_imq_config])  |[Link](https://arxiv.org/abs/1711.01558)          |    ![][6]     | ![][5]  |
 | Beta-VAE ([Code][bvae_code], [Config][bbvae_config])                 |[Link](https://openreview.net/forum?id=Sy2fzU9gl) |    ![][8]     | ![][7]  |
 | Disentangled Beta-VAE ([Code][bvae_code], [Config][bhvae_config])    |[Link](https://arxiv.org/abs/1804.03599)          |    ![][22]    | ![][21] |
-| IWAE (5 Samples) ([Code][iwae_code], [Config][iwae_config])          |[Link](https://arxiv.org/abs/1509.00519)          |    ![][10]    | ![][9]  |
+| IWAE (*K = 5*) ([Code][iwae_code], [Config][iwae_config])            |[Link](https://arxiv.org/abs/1509.00519)          |    ![][10]    | ![][9]  |
+| MIWAE (*K = 5, M = 5*) ([Code][miwae_code], [Config][miwae_config])  |[Link](https://arxiv.org/abs/1802.04537)          |    ![][30]    | ![][29] |
 | DFCVAE   ([Code][dfcvae_code], [Config][dfcvae_config])              |[Link](https://arxiv.org/abs/1610.00291)          |    ![][12]    | ![][11] |
 | MSSIM VAE    ([Code][mssimvae_code], [Config][mssimvae_config])      |[Link](https://arxiv.org/abs/1511.06409)          |    ![][14]    | ![][13] |
 | Categorical VAE   ([Code][catvae_code], [Config][catvae_config])     |[Link](https://arxiv.org/abs/1611.01144)          |    ![][18]    | ![][17] |
 | Joint VAE ([Code][jointvae_code], [Config][jointvae_config])         |[Link](https://arxiv.org/abs/1804.00104)          |    ![][20]    | ![][19] |
 | Info VAE   ([Code][infovae_code], [Config][infovae_config])          |[Link](https://arxiv.org/abs/1706.02262)          |    ![][24]    | ![][23] |
 | LogCosh VAE   ([Code][logcoshvae_code], [Config][logcoshvae_config]) |[Link](https://openreview.net/forum?id=rkglvsC9Ym)|    ![][26]    | ![][25] |
-| SWAE (50 Projections) ([Code][swae_code], [Config][swae_config])     |[Link](https://arxiv.org/abs/1804.01947)          |    ![][28]    | ![][27] |
+| SWAE (200 Projections) ([Code][swae_code], [Config][swae_config])    |[Link](https://arxiv.org/abs/1804.01947)          |    ![][28]    | ![][27] |
 
 
 <!-- | Gamma VAE             |[Link](https://arxiv.org/abs/1610.05683)          |    ![][16]    | ![][15] |-->
@@ -104,6 +105,7 @@ logging_params:
 - [x] DFC VAE
 - [x] MSSIM VAE
 - [x] IWAE
+- [x] MIWAE
 - [x] WAE-MMD
 - [x] Conditional VAE
 - [x] Categorical VAE (Gumbel-Softmax VAE)
@@ -111,7 +113,7 @@ logging_params:
 - [x] Disentangled beta-VAE
 - [x] InfoVAE
 - [x] LogCosh VAE
-- [ ] SWAE (in progress)
+- [x] SWAE
 - [ ] Ladder VAE (in progress)
 - [ ] Gamma VAE (in progress) 
 - [ ] Vamp VAE (in progress)
@@ -155,6 +157,7 @@ I would be happy to include your result (along with your config file) in this re
 [bvae_code]: https://github.com/AntixK/PyTorch-VAE/blob/master/models/beta_vae.py
 [wae_code]: https://github.com/AntixK/PyTorch-VAE/blob/master/models/wae_mmd.py
 [iwae_code]: https://github.com/AntixK/PyTorch-VAE/blob/master/models/iwae.py
+[miwae_code]: https://github.com/AntixK/PyTorch-VAE/blob/master/models/miwae.py
 [swae_code]: https://github.com/AntixK/PyTorch-VAE/blob/master/models/swae.py
 [jointvae_code]: https://github.com/AntixK/PyTorch-VAE/blob/master/models/joint_vae.py
 [dfcvae_code]: https://github.com/AntixK/PyTorch-VAE/blob/master/models/dfcvae.py
@@ -170,6 +173,7 @@ I would be happy to include your result (along with your config file) in this re
 [wae_rbf_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/wae_mmd_rbf.yaml
 [wae_imq_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/wae_mmd_imq.yaml
 [iwae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/iwae.yaml
+[miwae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/miwae.yaml
 [swae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/swae.yaml
 [jointvae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/joint_vae.yaml
 [dfcvae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/dfc_vae.yaml
@@ -206,6 +210,8 @@ I would be happy to include your result (along with your config file) in this re
 [26]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_LogCoshVAE_49.png
 [27]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/SWAE_49.png
 [28]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_SWAE_49.png
+[29]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/MIWAE_29.png
+[30]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_MIWAE_29.png
 
 [python-image]: https://img.shields.io/badge/Python-3.5-ff69b4.svg
 [python-url]: https://www.python.org/

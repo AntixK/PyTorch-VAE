@@ -3,20 +3,23 @@ from models import BaseVAE
 from torch import nn
 from torch.nn import functional as F
 from .types_ import *
+from torch.distributions import Normal
 
 
-class IWAE(BaseVAE):
+class MIWAE(BaseVAE):
 
     def __init__(self,
                  in_channels: int,
                  latent_dim: int,
                  hidden_dims: List = None,
                  num_samples: int = 5,
+                 num_estimates: int = 5,
                  **kwargs) -> None:
-        super(IWAE, self).__init__()
+        super(MIWAE, self).__init__()
 
         self.latent_dim = latent_dim
-        self.num_samples = num_samples
+        self.num_samples = num_samples # K
+        self.num_estimates = num_estimates # M
 
         modules = []
         if hidden_dims is None:
@@ -99,13 +102,13 @@ class IWAE(BaseVAE):
         :param z: (Tensor) [B x S x D]
         :return: (Tensor) [B x S x C x H x W]
         """
-        B, _, _ = z.size()
-        z = z.view(-1, self.latent_dim) #[BS x D]
+        B, M,S, D = z.size()
+        z = z.view(-1, self.latent_dim) #[BMS x D]
         result = self.decoder_input(z)
         result = result.view(-1, 512, 2, 2)
         result = self.decoder(result)
-        result = self.final_layer(result) #[BS x C x H x W ]
-        result = result.view([B, -1, result.size(1), result.size(2), result.size(3)]) #[B x S x C x H x W]
+        result = self.final_layer(result) #[BMS x C x H x W ]
+        result = result.view([B, M, S,result.size(-3), result.size(-2), result.size(-1)]) #[B x M x S x C x H x W]
         return result
 
     def reparameterize(self, mu: Tensor, logvar: Tensor) -> Tensor:
@@ -120,9 +123,9 @@ class IWAE(BaseVAE):
 
     def forward(self, input: Tensor, **kwargs) -> List[Tensor]:
         mu, log_var = self.encode(input)
-        mu = mu.repeat(self.num_samples, 1, 1).permute(1, 0, 2) # [B x S x D]
-        log_var = log_var.repeat(self.num_samples, 1, 1).permute(1, 0, 2) # [B x S x D]
-        z= self.reparameterize(mu, log_var) # [B x S x D]
+        mu = mu.repeat(self.num_estimates, self.num_samples, 1, 1).permute(2, 0, 1, 3) # [B x M x S x D]
+        log_var = log_var.repeat(self.num_estimates, self.num_samples, 1, 1).permute(2, 0, 1, 3) # [B x M x S x D]
+        z = self.reparameterize(mu, log_var) # [B x M x S x D]
         eps = (z - mu) / log_var # Prior samples
         return  [self.decode(z), input, mu, log_var, z, eps]
 
@@ -142,20 +145,21 @@ class IWAE(BaseVAE):
         z = args[4]
         eps = args[5]
 
-        input = input.repeat(self.num_samples, 1, 1, 1, 1).permute(1, 0, 2, 3, 4) #[B x S x C x H x W]
+        input = input.repeat(self.num_estimates,
+                             self.num_samples, 1, 1, 1, 1).permute(2, 0, 1, 3, 4, 5) #[B x M x S x C x H x W]
 
         kld_weight = kwargs['M_N'] # Account for the minibatch samples from the dataset
 
-        log_p_x_z = ((recons - input) ** 2).flatten(2).mean(-1) # Reconstruction Loss [B x S]
-        kld_loss = -0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim=2) ## [B x S]
+        log_p_x_z = ((recons - input) ** 2).flatten(3).mean(-1) # Reconstruction Loss # [B x M x S]
+
+        kld_loss = -0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim=3) # [B x M x S]
         # Get importance weights
         log_weight = (log_p_x_z + kld_weight * kld_loss) #.detach().data
 
         # Rescale the weights (along the sample dim) to lie in [0, 1] and sum to 1
-        weight = F.softmax(log_weight, dim = -1)
-        # kld_loss = torch.mean(kld_loss, dim = 0)
+        weight = F.softmax(log_weight, dim = -1)  # [B x M x S]
 
-        loss = torch.mean(torch.sum(weight * log_weight, dim=-1), dim = 0)
+        loss = torch.mean(torch.mean(torch.sum(weight * log_weight, dim=-1), dim = -2), dim = 0)
 
         return {'loss': loss, 'Reconstruction_Loss':log_p_x_z.mean(), 'KLD':-kld_loss.mean()}
 
@@ -169,7 +173,7 @@ class IWAE(BaseVAE):
         :param current_device: (Int) Device to run the model
         :return: (Tensor)
         """
-        z = torch.randn(num_samples, 1,
+        z = torch.randn(num_samples, 1, 1,
                         self.latent_dim)
 
         z = z.to(current_device)
@@ -185,4 +189,4 @@ class IWAE(BaseVAE):
         :return: (Tensor) [B x C x H x W]
         """
 
-        return self.forward(x)[0][:, 0, :]
+        return self.forward(x)[0][:, 0, 0, :]

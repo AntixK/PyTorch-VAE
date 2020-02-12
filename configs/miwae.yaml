@@ -1,0 +1,25 @@
+model_params:
+  name: 'MIWAE'
+  in_channels: 3
+  latent_dim: 128
+  num_samples: 5
+  num_estimates: 3
+
+exp_params:
+  dataset: celeba
+  data_path: "../../shared/momo/Data/"
+  img_size: 64
+  batch_size: 144 # Better to have a square number
+  LR: 0.005
+  weight_decay: 0.0
+  scheduler_gamma: 0.95
+
+trainer_params:
+  gpus: 1
+  max_nb_epochs: 50
+  max_epochs: 30
+
+logging_params:
+  save_dir: "logs/"
+  name: "MIWAE"
+  manual_seed: 1265

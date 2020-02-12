@@ -17,6 +17,7 @@ from .info_vae import *
 from .lvae import LVAE
 from .logcosh_vae import *
 from .swae import *
+from .miwae import *
 
 
 # Aliases
@@ -41,4 +42,5 @@ vae_models = {'VanillaVAE':VanillaVAE,
               'InfoVAE':InfoVAE,
               'LVAE':LVAE,
               'LogCoshVAE':LogCoshVAE,
-              'SWAE':SWAE}
+              'SWAE':SWAE,
+              'MIWAE':MIWAE}
