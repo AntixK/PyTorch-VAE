@@ -79,7 +79,7 @@ logging_params:
 
 
 | Model                                                                | Paper                                            |Reconstruction | Samples |
-|----------------------------------------------------------------------|-------------------------------------------------|---------------|---------|
+|----------------------------------------------------------------------|--------------------------------------------------|---------------|---------|
 | VAE ([Code][vae_code], [Config][vae_config])                         |[Link](https://arxiv.org/abs/1312.6114)           |    ![][2]     | ![][1]  |
 | Conditional VAE ([Code][cvae_code], [Config][cvae_config])           |[Link](https://openreview.net/forum?id=rJWXGDWd-H)|    ![][16]    | ![][15] |
 | WAE - MMD (RBF Kernel) ([Code][wae_code], [Config][wae_rbf_config])  |[Link](https://arxiv.org/abs/1711.01558)          |    ![][4]     | ![][3]  |
@@ -87,7 +87,7 @@ logging_params:
 | Beta-VAE ([Code][bvae_code], [Config][bbvae_config])                 |[Link](https://openreview.net/forum?id=Sy2fzU9gl) |    ![][8]     | ![][7]  |
 | Disentangled Beta-VAE ([Code][bvae_code], [Config][bhvae_config])    |[Link](https://arxiv.org/abs/1804.03599)          |    ![][22]    | ![][21] |
 | IWAE (*K = 5*) ([Code][iwae_code], [Config][iwae_config])            |[Link](https://arxiv.org/abs/1509.00519)          |    ![][10]    | ![][9]  |
-| MIWAE (*K = 5, M = 5*) ([Code][miwae_code], [Config][miwae_config])  |[Link](https://arxiv.org/abs/1802.04537)          |    ![][30]    | ![][29] |
+| MIWAE (*K = 5, M = 3*) ([Code][miwae_code], [Config][miwae_config])  |[Link](https://arxiv.org/abs/1802.04537)          |    ![][30]    | ![][29] |
 | DFCVAE   ([Code][dfcvae_code], [Config][dfcvae_config])              |[Link](https://arxiv.org/abs/1610.00291)          |    ![][12]    | ![][11] |
 | MSSIM VAE    ([Code][mssimvae_code], [Config][mssimvae_config])      |[Link](https://arxiv.org/abs/1511.06409)          |    ![][14]    | ![][13] |
 | Categorical VAE   ([Code][catvae_code], [Config][catvae_config])     |[Link](https://arxiv.org/abs/1611.01144)          |    ![][18]    | ![][17] |
@@ -114,18 +114,21 @@ logging_params:
 - [x] InfoVAE
 - [x] LogCosh VAE
 - [x] SWAE
-- [ ] Ladder VAE (in progress)
-- [ ] Gamma VAE (in progress) 
-- [ ] Vamp VAE (in progress)
-- [ ] HVAE (VAE with Vamp Prior) (in progress)
+- [ ] VQVAE (in progress)
+- [ ] Ladder VAE (Doesn't work well)
+- [ ] Gamma VAE (Doesn't work well) 
+- [ ] Vamp VAE (Doesn't work well)
 - [ ] Beta TC-VAE
 - [ ] PixelVAE
-- [ ] VQVAE
+
 
 
 ### Contributing
 If you have trained a better model, using these implementations, by fine-tuning the hyper-params in the config file,
 I would be happy to include your result (along with your config file) in this repo, citing your name 😊.
+
+Additionally, if you would like to contribute some models, check out the **TODO** for models that are pending or 
+doesn't seem to work well.
 
 ### License
 **Apache License 2.0**
