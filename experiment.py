@@ -72,25 +72,28 @@ class VAEXperiment(pl.LightningModule):
                           f"{self.logger.save_dir}{self.logger.name}/version_{self.logger.version}/"
                           f"recons_{self.logger.name}_{self.current_epoch}.png",
                           normalize=True,
-                          nrow=int(math.sqrt(self.params['batch_size'])))
+                          nrow=12)
 
         # vutils.save_image(test_input.data,
         #                   f"{self.logger.save_dir}{self.logger.name}/version_{self.logger.version}/"
         #                   f"real_img_{self.logger.name}_{self.current_epoch}.png",
         #                   normalize=True,
-        #                   nrow=int(math.sqrt(self.params['batch_size'])))
+        #                   nrow=12)
 
-        samples = self.model.sample(self.params['batch_size'],
-                                    self.curr_device,
-                                    labels = test_label).cpu()
-        vutils.save_image(samples.data,
-                          f"{self.logger.save_dir}{self.logger.name}/version_{self.logger.version}/"
-                          f"{self.logger.name}_{self.current_epoch}.png",
-                          normalize=True,
-                          nrow=int(math.sqrt(self.params['batch_size'])))
+        try:
+            samples = self.model.sample(144,
+                                        self.curr_device,
+                                        labels = test_label).cpu()
+            vutils.save_image(samples.data,
+                              f"{self.logger.save_dir}{self.logger.name}/version_{self.logger.version}/"
+                              f"{self.logger.name}_{self.current_epoch}.png",
+                              normalize=True,
+                              nrow=12)
+        except:
+            raise RuntimeWarning('No sampler for the VAE model is proviced. Continuing...')
 
 
-        del test_input, recons, samples
+        del test_input, recons #, samples
 
 
     def configure_optimizers(self):
@@ -156,7 +159,7 @@ class VAEXperiment(pl.LightningModule):
                                                         split = "test",
                                                         transform=transform,
                                                         download=False),
-                                                 batch_size= self.params['batch_size'],
+                                                 batch_size= 144,
                                                  shuffle = True,
                                                  drop_last=True)
         else:

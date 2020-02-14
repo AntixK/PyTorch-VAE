@@ -47,7 +47,7 @@ runner = Trainer(default_save_path=f"{tt_logger.save_dir}",
                  log_save_interval=100,
                  train_percent_check=1.,
                  val_percent_check=1.,
-                 num_sanity_val_steps=0,
+                 num_sanity_val_steps=5,
                  early_stop_callback = False,
                  **config['trainer_params'])
 
