@@ -83,14 +83,14 @@ class VAEXperiment(pl.LightningModule):
         try:
             samples = self.model.sample(144,
                                         self.curr_device,
-                                        labels = test_label).cpu()
-            vutils.save_image(samples.data,
+                                        labels = test_label)
+            vutils.save_image(samples.cpu().data,
                               f"{self.logger.save_dir}{self.logger.name}/version_{self.logger.version}/"
                               f"{self.logger.name}_{self.current_epoch}.png",
                               normalize=True,
                               nrow=12)
         except:
-            raise RuntimeWarning('No sampler for the VAE model is proviced. Continuing...')
+            pass
 
 
         del test_input, recons #, samples

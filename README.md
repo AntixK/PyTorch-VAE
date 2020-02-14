@@ -17,7 +17,7 @@
 A collection of Variational AutoEncoders (VAEs) implemented in PyTorch with focus on reproducibility. The aim of this project is to provide
 a quick and simple working example for many of the cool VAE models out there. All the models are trained on the [CelebA dataset](http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html)
 for consistency and comparison. The architecture of all the models are kept as similar as possible with the same layers, except for cases where the original paper necessitates 
-a radically different architecture.
+a radically different architecture (Ex. VQ VAE uses Residual layers and no Batch-Norm, unlike other models).
 Here are the [results](https://github.com/AntixK/PyTorch-VAE/blob/master/README.md#--results) of each model.
 
 ### Requirements
@@ -116,7 +116,7 @@ logging_params:
 - [x] InfoVAE
 - [x] LogCosh VAE
 - [x] SWAE
-- [ ] VQVAE (in progress)
+- [x] VQVAE
 - [ ] Ladder VAE (Doesn't work well)
 - [ ] Gamma VAE (Doesn't work well) 
 - [ ] Vamp VAE (Doesn't work well)
