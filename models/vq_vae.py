@@ -7,7 +7,7 @@ from .types_ import *
 class VectorQuantizer(nn.Module):
     """
     Reference:
-    [1] https://github.com/zalandoresearch/pytorch-vq-vae
+    [1] https://github.com/deepmind/sonnet/blob/v2/sonnet/src/nets/vqvae.py
     """
     def __init__(self,
                  num_embeddings: int,

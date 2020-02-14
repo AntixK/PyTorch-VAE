@@ -219,7 +219,7 @@ doesn't seem to work well.
 [28]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_SWAE_49.png
 [29]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/MIWAE_29.png
 [30]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_MIWAE_29.png
-[31]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_VQVAE_29.png
+[31]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_VQVAE_1.png
 
 [python-image]: https://img.shields.io/badge/Python-3.5-ff69b4.svg
 [python-url]: https://www.python.org/
