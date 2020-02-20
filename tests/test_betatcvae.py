@@ -1,14 +1,14 @@
 import torch
 import unittest
-from models import VQVAE
+from models import BetaTCVAE
 from torchsummary import summary
 
 
-class TestVQVAE(unittest.TestCase):
+class TestBetaTCVAE(unittest.TestCase):
 
     def setUp(self) -> None:
         # self.model2 = VAE(3, 10)
-        self.model = VQVAE(3, 64, 512)
+        self.model = BetaTCVAE(3, 64, anneal_steps= 100)
 
     def test_summary(self):
         print(summary(self.model, (3, 64, 64), device='cpu'))

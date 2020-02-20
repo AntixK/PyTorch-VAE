@@ -117,10 +117,10 @@ logging_params:
 - [x] LogCosh VAE
 - [x] SWAE
 - [x] VQVAE
+- [ ] Beta TC-VAE (in progress)
 - [ ] Ladder VAE (Doesn't work well)
 - [ ] Gamma VAE (Doesn't work well) 
 - [ ] Vamp VAE (Doesn't work well)
-- [ ] Beta TC-VAE
 - [ ] PixelVAE
 
 
