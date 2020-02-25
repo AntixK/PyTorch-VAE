@@ -36,8 +36,7 @@ class BetaTCVAE(BaseVAE):
             modules.append(
                 nn.Sequential(
                     nn.Conv2d(in_channels, out_channels=h_dim,
-                              kernel_size= 3, stride= 2, padding  = 1),
-                    nn.BatchNorm2d(h_dim),
+                              kernel_size= 4, stride= 2, padding  = 1),
                     nn.LeakyReLU())
             )
             in_channels = h_dim
@@ -63,7 +62,6 @@ class BetaTCVAE(BaseVAE):
                                        stride = 2,
                                        padding=1,
                                        output_padding=1),
-                    nn.BatchNorm2d(hidden_dims[i + 1]),
                     nn.LeakyReLU())
             )
 
@@ -78,7 +76,6 @@ class BetaTCVAE(BaseVAE):
                                                stride=2,
                                                padding=1,
                                                output_padding=1),
-                            nn.BatchNorm2d(hidden_dims[-1]),
                             nn.LeakyReLU(),
                             nn.Conv2d(hidden_dims[-1], out_channels= 3,
                                       kernel_size= 3, padding= 1),
@@ -153,14 +150,14 @@ class BetaTCVAE(BaseVAE):
         :param kwargs:
         :return:
         """
-        if self.training:
-            self.num_iter += 1
             
         recons = args[0]
         input = args[1]
         mu = args[2]
         log_var = args[3]
         z = args[4]
+
+        weight = 1 #kwargs['M_N']  # Account for the minibatch samples from the dataset
 
         recons_loss =F.mse_loss(recons, input)
 
@@ -174,6 +171,18 @@ class BetaTCVAE(BaseVAE):
                                                 mu.view(1, batch_size, latent_dim),
                                                 log_var.view(1, batch_size, latent_dim))
 
+        # Reference
+        # [1] https://github.com/YannDubs/disentangling-vae/blob/535bbd2e9aeb5a200663a4f82f1d34e084c4ba8d/disvae/utils/math.py#L54
+        dataset_size = (1 / kwargs['M_N']) * batch_size # dataset size
+        strat_weight = (dataset_size - batch_size - 1) / (dataset_size * (batch_size - 1))
+        importance_weights = torch.Tensor(batch_size, batch_size).fill_(1 / (batch_size -1)).to(input.device)
+        importance_weights.view(-1)[::batch_size] = 1 / dataset_size
+        importance_weights.view(-1)[1::batch_size] = strat_weight
+        importance_weights[batch_size - 2, 0] = strat_weight
+        log_importance_weights = importance_weights.log()
+
+        mat_log_q_z += log_importance_weights.unsqueeze(2)
+
         log_q_z = torch.logsumexp(mat_log_q_z.sum(2), dim=1, keepdim=False)
         log_prod_q_z = torch.logsumexp(mat_log_q_z, dim=1, keepdim=False).sum(1)
 
@@ -183,11 +192,16 @@ class BetaTCVAE(BaseVAE):
 
         # kld_loss = torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim = 1), dim = 0)
 
-        anneal_rate = min(0 + 1 * self.num_iter / self.anneal_steps, 1)
+        if self.training:
+            self.num_iter += 1
+            anneal_rate = min(0 + 1 * self.num_iter / self.anneal_steps, 1)
+        else:
+            anneal_rate = 1.
+
         loss = recons_loss + \
                self.alpha * mi_loss + \
-               self.beta * tc_loss + \
-               anneal_rate * self.gamma * kld_loss
+               weight * (self.beta * tc_loss +
+                         anneal_rate * self.gamma * kld_loss)
         
         return {'loss': loss,
                 'Reconstruction_Loss':recons_loss,

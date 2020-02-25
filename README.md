@@ -72,6 +72,11 @@ logging_params:
   manual_seed: 
 ```
 
+**View TensorBoard Logs**
+```
+$ cd logs/<experiment name>/version_<the version you want>
+$ tensorboard --logdir tf
+```
 
 ----
 <h2 align="center">
@@ -87,6 +92,7 @@ logging_params:
 | WAE - MMD (IMQ Kernel) ([Code][wae_code], [Config][wae_imq_config])    |[Link](https://arxiv.org/abs/1711.01558)          |    ![][6]     | ![][5]  |
 | Beta-VAE ([Code][bvae_code], [Config][bbvae_config])                   |[Link](https://openreview.net/forum?id=Sy2fzU9gl) |    ![][8]     | ![][7]  |
 | Disentangled Beta-VAE ([Code][bvae_code], [Config][bhvae_config])      |[Link](https://arxiv.org/abs/1804.03599)          |    ![][22]    | ![][21] |
+| Beta-TC-VAE ([Code][btcvae_code], [Config][btcvae_config])             |[Link](https://arxiv.org/abs/1802.04942)          |    ![][34]    | ![][33] |
 | IWAE (*K = 5*) ([Code][iwae_code], [Config][iwae_config])              |[Link](https://arxiv.org/abs/1509.00519)          |    ![][10]    | ![][9]  |
 | MIWAE (*K = 5, M = 3*) ([Code][miwae_code], [Config][miwae_config])    |[Link](https://arxiv.org/abs/1802.04537)          |    ![][30]    | ![][29] |
 | DFCVAE   ([Code][dfcvae_code], [Config][dfcvae_config])                |[Link](https://arxiv.org/abs/1610.00291)          |    ![][12]    | ![][11] |
@@ -160,6 +166,7 @@ doesn't seem to work well.
 [vae_code]: https://github.com/AntixK/PyTorch-VAE/blob/master/models/vanilla_vae.py
 [cvae_code]: https://github.com/AntixK/PyTorch-VAE/blob/master/models/cvae.py
 [bvae_code]: https://github.com/AntixK/PyTorch-VAE/blob/master/models/beta_vae.py
+[btcvae_code]: https://github.com/AntixK/PyTorch-VAE/blob/master/models/betatc_vae.py
 [wae_code]: https://github.com/AntixK/PyTorch-VAE/blob/master/models/wae_mmd.py
 [iwae_code]: https://github.com/AntixK/PyTorch-VAE/blob/master/models/iwae.py
 [miwae_code]: https://github.com/AntixK/PyTorch-VAE/blob/master/models/miwae.py
@@ -176,6 +183,7 @@ doesn't seem to work well.
 [cvae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/cvae.yaml
 [bbvae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/bbvae.yaml
 [bhvae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/bhvae.yaml
+[btcvae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/betatc_vae.yaml
 [wae_rbf_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/wae_mmd_rbf.yaml
 [wae_imq_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/wae_mmd_imq.yaml
 [iwae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/iwae.yaml
@@ -219,7 +227,9 @@ doesn't seem to work well.
 [28]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_SWAE_49.png
 [29]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/MIWAE_29.png
 [30]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_MIWAE_29.png
-[31]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_VQVAE_1.png
+[31]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_VQVAE_29.png
+[33]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/BetaTCVAE_20.png
+[34]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_BetaTCVAE_20.png
 
 [python-image]: https://img.shields.io/badge/Python-3.5-ff69b4.svg
 [python-url]: https://www.python.org/
