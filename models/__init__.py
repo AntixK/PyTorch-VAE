@@ -20,6 +20,7 @@ from .swae import *
 from .miwae import *
 from .vq_vae import *
 from .betatc_vae import *
+from .dip_vae import *
 
 
 # Aliases
@@ -35,6 +36,7 @@ vae_models = {'HVAE':HVAE,
               'MIWAE':MIWAE,
               'VQVAE':VQVAE,
               'DFCVAE':DFCVAE,
+              'DIPVAE':DIPVAE,
               'BetaVAE':BetaVAE,
               'InfoVAE':InfoVAE,
               'WAE_MMD':WAE_MMD,

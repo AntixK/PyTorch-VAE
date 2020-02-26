@@ -103,6 +103,7 @@ $ tensorboard --logdir tf
 | LogCosh VAE   ([Code][logcoshvae_code], [Config][logcoshvae_config])   |[Link](https://openreview.net/forum?id=rkglvsC9Ym)|    ![][26]    | ![][25] |
 | SWAE (200 Projections) ([Code][swae_code], [Config][swae_config])      |[Link](https://arxiv.org/abs/1804.01947)          |    ![][28]    | ![][27] |
 | VQ-VAE (*K = 512, D = 64*) ([Code][vqvae_code], [Config][vqvae_config])|[Link](https://arxiv.org/abs/1711.00937)          |    ![][31]    | **N/A** |
+| DIP VAE ([Code][dipvae_code], [Config][dipvae_config])                 |[Link](https://arxiv.org/abs/1711.00848)          |    ![][36]    | ![][35] |
 
 
 <!-- | Gamma VAE             |[Link](https://arxiv.org/abs/1610.05683)          |    ![][16]    | ![][15] |-->
@@ -115,7 +116,7 @@ $ tensorboard --logdir tf
 - [x] IWAE
 - [x] MIWAE
 - [x] WAE-MMD
-- [x] Conditional VAE
+- [x] Conditional VAE- [ ] PixelVAE
 - [x] Categorical VAE (Gumbel-Softmax VAE)
 - [x] Joint VAE
 - [x] Disentangled beta-VAE
@@ -123,12 +124,11 @@ $ tensorboard --logdir tf
 - [x] LogCosh VAE
 - [x] SWAE
 - [x] VQVAE
-- [ ] Beta TC-VAE (in progress)
+- [x] Beta TC-VAE
+- [ ] DIP VAE (In progress)
 - [ ] Ladder VAE (Doesn't work well)
 - [ ] Gamma VAE (Doesn't work well) 
 - [ ] Vamp VAE (Doesn't work well)
-- [ ] PixelVAE
-
 
 
 ### Contributing
@@ -178,6 +178,7 @@ doesn't seem to work well.
 [catvae_code]: https://github.com/AntixK/PyTorch-VAE/blob/master/models/cat_vae.py
 [infovae_code]: https://github.com/AntixK/PyTorch-VAE/blob/master/models/info_vae.py
 [vqvae_code]: https://github.com/AntixK/PyTorch-VAE/blob/master/models/vq_vae.py
+[dipvae_code]: https://github.com/AntixK/PyTorch-VAE/blob/master/models/dip_vae.py
 
 [vae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/vae.yaml
 [cvae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/cvae.yaml
@@ -196,6 +197,7 @@ doesn't seem to work well.
 [catvae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/cat_vae.yaml
 [infovae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/infovae.yaml
 [vqvae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/vq_vae.yaml
+[dipvae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/dip_vae.yaml
 
 [1]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/Vanilla%20VAE_25.png
 [2]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_Vanilla%20VAE_25.png
@@ -228,8 +230,8 @@ doesn't seem to work well.
 [29]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/MIWAE_29.png
 [30]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_MIWAE_29.png
 [31]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_VQVAE_29.png
-[33]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/BetaTCVAE_20.png
-[34]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_BetaTCVAE_20.png
+[33]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/BetaTCVAE_49.png
+[34]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_BetaTCVAE_49.png
 
 [python-image]: https://img.shields.io/badge/Python-3.5-ff69b4.svg
 [python-url]: https://www.python.org/
