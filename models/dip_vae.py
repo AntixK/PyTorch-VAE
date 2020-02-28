@@ -137,8 +137,8 @@ class DIPVAE(BaseVAE):
         mu = args[2]
         log_var = args[3]
 
-        kld_weight = 1. #kwargs['M_N'] # Account for the minibatch samples from the dataset
-        recons_loss =F.mse_loss(recons, input)
+        kld_weight = 1 #* kwargs['M_N'] # Account for the minibatch samples from the dataset
+        recons_loss =F.mse_loss(recons, input, reduction='sum')
 
 
         kld_loss = torch.mean(-0.5 * torch.sum(1 + log_var - mu ** 2 - log_var.exp(), dim = 1), dim = 0)
@@ -150,8 +150,8 @@ class DIPVAE(BaseVAE):
 
         cov_diag = torch.diag(cov_z) # [D]
         cov_offdiag = cov_z - torch.diag(cov_diag) # [D x D]
-        dip_loss = self.lambda_offdiag * torch.mean(cov_offdiag ** 2) + \
-                   self.lambda_diag * torch.mean((cov_diag - 1) ** 2)
+        dip_loss = self.lambda_offdiag * torch.sum(cov_offdiag ** 2) + \
+                   self.lambda_diag * torch.sum((cov_diag - 1) ** 2)
 
         loss = recons_loss + kld_weight * kld_loss + dip_loss
         return {'loss': loss,

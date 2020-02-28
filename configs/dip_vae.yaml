@@ -2,8 +2,8 @@ model_params:
   name: 'DIPVAE'
   in_channels: 3
   latent_dim: 128
-  lambda_diag: 10.
-  lambda_offdiag: 5.
+  lambda_diag: 4.
+  lambda_offdiag: 2.
 
 
 exp_params:
