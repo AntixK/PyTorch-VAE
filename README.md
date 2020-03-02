@@ -232,6 +232,8 @@ doesn't seem to work well.
 [31]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_VQVAE_29.png
 [33]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/BetaTCVAE_49.png
 [34]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_BetaTCVAE_49.png
+[35]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/DIPVAE_83.png
+[36]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_BDIPVAE_83.png
 
 [python-image]: https://img.shields.io/badge/Python-3.5-ff69b4.svg
 [python-url]: https://www.python.org/
