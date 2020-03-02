@@ -108,6 +108,7 @@ $ tensorboard --logdir tf
 
 <!-- | Gamma VAE             |[Link](https://arxiv.org/abs/1610.05683)          |    ![][16]    | ![][15] |-->
 
+<!--
 ### TODO
 - [x] VanillaVAE
 - [x] Beta VAE
@@ -125,18 +126,17 @@ $ tensorboard --logdir tf
 - [x] SWAE
 - [x] VQVAE
 - [x] Beta TC-VAE
-- [ ] DIP VAE (In progress)
+- [x] DIP VAE
 - [ ] Ladder VAE (Doesn't work well)
 - [ ] Gamma VAE (Doesn't work well) 
 - [ ] Vamp VAE (Doesn't work well)
-
+-->
 
 ### Contributing
 If you have trained a better model, using these implementations, by fine-tuning the hyper-params in the config file,
 I would be happy to include your result (along with your config file) in this repo, citing your name 😊.
 
-Additionally, if you would like to contribute some models, check out the **TODO** for models that are pending or 
-doesn't seem to work well.
+Additionally, if you would like to contribute some models, please submit a PR.
 
 ### License
 **Apache License 2.0**
