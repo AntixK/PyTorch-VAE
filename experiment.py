@@ -3,12 +3,12 @@ import torch
 from torch import optim
 from models import BaseVAE
 from models.types_ import *
+from utils import data_loader
 import pytorch_lightning as pl
 from torchvision import transforms
 import torchvision.utils as vutils
 from torchvision.datasets import CelebA
 from torch.utils.data import DataLoader
-
 
 
 class VAEXperiment(pl.LightningModule):
@@ -50,7 +50,7 @@ class VAEXperiment(pl.LightningModule):
 
         results = self.forward(real_img, labels = labels)
         val_loss = self.model.loss_function(*results,
-                                            M_N = self.params['batch_size']/ self.num_train_imgs,
+                                            M_N = self.params['batch_size']/ self.num_val_imgs,
                                             optimizer_idx = optimizer_idx,
                                             batch_idx = batch_idx)
 
@@ -132,7 +132,7 @@ class VAEXperiment(pl.LightningModule):
         except:
             return optims
 
-    @pl.data_loader
+    @data_loader
     def train_dataloader(self):
         transform = self.data_transforms()
 
@@ -150,7 +150,7 @@ class VAEXperiment(pl.LightningModule):
                           shuffle = True,
                           drop_last=True)
 
-    @pl.data_loader
+    @data_loader
     def val_dataloader(self):
         transform = self.data_transforms()
 
@@ -162,8 +162,10 @@ class VAEXperiment(pl.LightningModule):
                                                  batch_size= 144,
                                                  shuffle = True,
                                                  drop_last=True)
+            self.num_val_imgs = len(self.sample_dataloader)
         else:
             raise ValueError('Undefined dataset type')
+
         return self.sample_dataloader
 
     def data_transforms(self):
