@@ -20,6 +20,7 @@ class VanillaVAE(BaseVAE):
         modules = []
         if hidden_dims is None:
             hidden_dims = [32, 64, 128, 256, 512]
+        self.last_hdim = hidden_dims[-1]
 
         # Build Encoder
         for h_dim in hidden_dims:
@@ -99,7 +100,7 @@ class VanillaVAE(BaseVAE):
         :return: (Tensor) [B x C x H x W]
         """
         result = self.decoder_input(z)
-        result = result.view(-1, 512, 2, 2)
+        result = result.view(-1, self.last_hdim, 2, 2)
         result = self.decoder(result)
         result = self.final_layer(result)
         return result
