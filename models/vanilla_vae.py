@@ -21,6 +21,7 @@ class VanillaVAE(BaseVAE):
         if hidden_dims is None:
             hidden_dims = [32, 64, 128, 256, 512]
         self.last_hdim = hidden_dims[-1]
+        image_channels = in_channels
 
         # Build Encoder
         for h_dim in hidden_dims:
@@ -71,7 +72,7 @@ class VanillaVAE(BaseVAE):
                                                output_padding=1),
                             nn.BatchNorm2d(hidden_dims[-1]),
                             nn.LeakyReLU(),
-                            nn.Conv2d(hidden_dims[-1], out_channels= in_channels,
+                            nn.Conv2d(hidden_dims[-1], out_channels= image_channels,
                                       kernel_size= 3, padding= 1),
                             nn.Tanh())
 
