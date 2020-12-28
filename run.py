@@ -6,7 +6,7 @@ from models import *
 from experiment import VAEXperiment
 import torch.backends.cudnn as cudnn
 from pytorch_lightning import Trainer
-from pytorch_lightning.logging import TestTubeLogger
+from pytorch_lightning.loggers import TestTubeLogger
 
 
 parser = argparse.ArgumentParser(description='Generic runner for VAE models')
