@@ -1,5 +1,5 @@
 pytorch-lightning==0.6.0
-PyYAML==5.1.2
+PyYAML==5.4
 tensorboard==2.1.0
 tensorboardX==1.6
 terminado==0.8.1
