@@ -103,7 +103,7 @@ class MIWAE(BaseVAE):
         :return: (Tensor) [B x S x C x H x W]
         """
         B, M,S, D = z.size()
-        z = z.view(-1, self.latent_dim) #[BMS x D]
+        z = z.contiguous().view(-1, self.latent_dim) #[BMS x D]
         result = self.decoder_input(z)
         result = result.view(-1, 512, 2, 2)
         result = self.decoder(result)
