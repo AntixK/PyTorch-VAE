@@ -14,7 +14,7 @@ class BaseVAE(nn.Module):
         raise NotImplementedError
 
     def sample(self, batch_size:int, current_device: int, **kwargs) -> Tensor:
-        raise RuntimeWarning()
+        raise NotImplementedError
 
     def generate(self, x: Tensor, **kwargs) -> Tensor:
         raise NotImplementedError

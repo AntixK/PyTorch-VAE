@@ -39,6 +39,7 @@ $ cd PyTorch-VAE
 $ python run.py -c configs/<config-file-name.yaml>
 ```
 **Config file template**
+
 ```yaml
 model_params:
   name: "<name of VAE model>"
@@ -48,10 +49,15 @@ model_params:
     .
     .
 
-exp_params:
+data_params:
   data_path: "<path to the celebA dataset>"
-  img_size: 64    # Models are designed to work for this size
-  batch_size: 64  # Better to have a square number
+  train_batch_size: 64 # Better to have a square number
+  val_batch_size:  64
+  patch_size: 64  # Models are designed to work for this size
+  num_workers: 4
+  
+exp_params:
+  manual_seed: 1265
   LR: 0.005
   weight_decay:
     .         # Other arguments required for training, like scheduler etc.
@@ -60,7 +66,7 @@ exp_params:
 
 trainer_params:
   gpus: 1         
-  max_nb_epochs: 50
+  max_epochs: 100
   gradient_clip_val: 1.5
     .
     .
@@ -69,14 +75,16 @@ trainer_params:
 logging_params:
   save_dir: "logs/"
   name: "<experiment name>"
-  manual_seed: 
 ```
 
 **View TensorBoard Logs**
 ```
 $ cd logs/<experiment name>/version_<the version you want>
-$ tensorboard --logdir tf
+$ tensorboard --logdir .
 ```
+
+**Note:** The default dataset is CelebA. However, there has been many issues with downloading the dataset from google drive (owing to some file structure changes). So, the recommendation is to download the [file](https://drive.google.com/file/d/1m8-EBPgi5MRubrm6iQjafK2QMHDBMSfJ/view?usp=sharing) from google drive directly and extract to the path of your choice. The default path assumed in the config files is `Data/celeba/img_align_celeba'. But you can change it acording to your preference.
+
 
 ----
 <h2 align="center">
