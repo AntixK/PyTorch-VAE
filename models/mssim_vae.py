@@ -231,7 +231,7 @@ class MSSIM(nn.Module):
         sigma2_sq = F.conv2d(img2 * img2, window, padding = window_size//2, groups=in_channel) - mu2_sq
         sigma12   = F.conv2d(img1 * img2, window, padding = window_size//2, groups=in_channel) - mu1_mu2
 
-        img_range = img1.max() - img1.min()
+        img_range = 1.0 #img1.max() - img1.min() # Dynamic range
         C1 = (0.01 * img_range) ** 2
         C2 = (0.03 * img_range) ** 2
 
