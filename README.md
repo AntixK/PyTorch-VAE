@@ -116,6 +116,7 @@ $ tensorboard --logdir .
 | DIP VAE ([Code][dipvae_code], [Config][dipvae_config])                 |[Link](https://arxiv.org/abs/1711.00848)          |    ![][36]    | ![][35] |
 | VNDAE ([Code][vndae_code], [Config][vndae_config])                     |[Link](https://arxiv.org/pdf/2101.11353.pdf)      |    ![][37]    | ![][38] |
 
+
 <!-- | Gamma VAE             |[Link](https://arxiv.org/abs/1610.05683)          |    ![][16]    | ![][15] |-->
 
 <!--
