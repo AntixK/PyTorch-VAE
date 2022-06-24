@@ -1,0 +1,28 @@
+model_params:
+  name: 'VNDAE'
+  in_channels: 3
+  latent_dim: 128
+
+
+data_params:
+  data_path: "data/"
+  train_batch_size: 64
+  val_batch_size:  64
+  patch_size: 64
+  num_workers: 4
+
+
+exp_params:
+  LR: 0.005
+  weight_decay: 0
+  scheduler_gamma: 0.95
+  kld_weight: 0.00025
+  manual_seed: 1265
+
+trainer_params:
+  gpus: [0]
+  max_epochs: 50
+
+logging_params:
+  save_dir: "logs/"
+  name: "VNDAE"
