@@ -114,7 +114,7 @@ $ tensorboard --logdir .
 | SWAE (200 Projections) ([Code][swae_code], [Config][swae_config])      |[Link](https://arxiv.org/abs/1804.01947)          |    ![][28]    | ![][27] |
 | VQ-VAE (*K = 512, D = 64*) ([Code][vqvae_code], [Config][vqvae_config])|[Link](https://arxiv.org/abs/1711.00937)          |    ![][31]    | **N/A** |
 | DIP VAE ([Code][dipvae_code], [Config][dipvae_config])                 |[Link](https://arxiv.org/abs/1711.00848)          |    ![][36]    | ![][35] |
-
+| VNDAE ([Code][vndae_code], [Config][vndae_config])                     |[Link](https://arxiv.org/pdf/2101.11353.pdf)      |    ![][37]    | ![][38] |
 
 <!-- | Gamma VAE             |[Link](https://arxiv.org/abs/1610.05683)          |    ![][16]    | ![][15] |-->
 
@@ -189,6 +189,7 @@ Additionally, if you would like to contribute some models, please submit a PR.
 [infovae_code]: https://github.com/AntixK/PyTorch-VAE/blob/master/models/info_vae.py
 [vqvae_code]: https://github.com/AntixK/PyTorch-VAE/blob/master/models/vq_vae.py
 [dipvae_code]: https://github.com/AntixK/PyTorch-VAE/blob/master/models/dip_vae.py
+[vndae_code]: https://github.com/ralphc1212/PyTorch-VAE/blob/deaac5a3165ea1048cfb129aa72b0a1c33f55041/models/vnd_ae.py
 
 [vae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/vae.yaml
 [cvae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/cvae.yaml
@@ -208,6 +209,7 @@ Additionally, if you would like to contribute some models, please submit a PR.
 [infovae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/infovae.yaml
 [vqvae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/vq_vae.yaml
 [dipvae_config]: https://github.com/AntixK/PyTorch-VAE/blob/master/configs/dip_vae.yaml
+[vndae_config]: https://github.com/ralphc1212/PyTorch-VAE/blob/deaac5a3165ea1048cfb129aa72b0a1c33f55041/configs/vndae.yaml
 
 [1]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/Vanilla%20VAE_25.png
 [2]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_Vanilla%20VAE_25.png
@@ -244,6 +246,8 @@ Additionally, if you would like to contribute some models, please submit a PR.
 [34]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_BetaTCVAE_49.png
 [35]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/DIPVAE_83.png
 [36]: https://github.com/AntixK/PyTorch-VAE/blob/master/assets/recons_DIPVAE_83.png
+[37]: https://github.com/ralphc1212/PyTorch-VAE/blob/deaac5a3165ea1048cfb129aa72b0a1c33f55041/assets/recons_VNDAE_1.png
+[38]: https://github.com/ralphc1212/PyTorch-VAE/blob/deaac5a3165ea1048cfb129aa72b0a1c33f55041/assets/VNDAE_1.png
 
 [python-image]: https://img.shields.io/badge/Python-3.5-ff69b4.svg
 [python-url]: https://www.python.org/
