@@ -31,7 +31,7 @@ class VNDAE(BaseVAE):
             modules.append(
                 nn.Sequential(
                     nn.Conv2d(in_channels, out_channels=h_dim,
-                              kernel_size= 3, stride= 2, padding  = 1),
+                              kernel_size= 3, stride= 2, padding = 1),
                     nn.BatchNorm2d(h_dim),
                     nn.LeakyReLU())
             )
@@ -151,7 +151,7 @@ class VNDAE(BaseVAE):
     def forward(self, input: Tensor, **kwargs) -> List[Tensor]:
         mu, log_var, p_vnd = self.encode(input)
         z = self.reparameterize(mu, log_var, p_vnd)
-        return  [self.decode(z), input, mu, log_var, p_vnd]
+        return [self.decode(z), input, mu, log_var, p_vnd]
 
     def loss_function(self,
                       *args,
