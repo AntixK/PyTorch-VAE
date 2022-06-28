@@ -3,6 +3,7 @@ import yaml
 import argparse
 import numpy as np
 from pathlib import Path
+from collections import OrderedDict
 from models import *
 from experiment import VAEXperiment
 import torch.backends.cudnn as cudnn
@@ -36,6 +37,15 @@ tb_logger =  TensorBoardLogger(save_dir=config['logging_params']['save_dir'],
 seed_everything(config['exp_params']['manual_seed'], True)
 
 model = vae_models[config['model_params']['name']](**config['model_params'])
+if 'custom_params' in config:
+    if config['custom_params']['resume_training']:
+        checkpoint = torch.load(config['custom_params']['resume_chkpt_path'])
+        state_dict = checkpoint['state_dict']
+        new_state_dict = OrderedDict()
+        for k, v in state_dict.items():
+            new_state_dict[k.replace("model.", "")] = v
+        model.load_state_dict(new_state_dict)
+
 experiment = VAEXperiment(model,
                           config['exp_params'])
 

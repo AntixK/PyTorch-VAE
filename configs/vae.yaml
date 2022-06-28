@@ -27,3 +27,6 @@ logging_params:
   save_dir: "logs/"
   name: "VanillaVAE"
   
+custom_params:
+  resume_training: false
+  resume_chkpt_path: ""
