@@ -75,7 +75,7 @@ class MSSIMVAE(BaseVAE):
                             nn.LeakyReLU(),
                             nn.Conv2d(hidden_dims[-1], out_channels= 3,
                                       kernel_size= 3, padding= 1),
-                            nn.Tanh())
+                            nn.Sigmoid())
 
         self.mssim_loss = MSSIM(self.in_channels,
                                 window_size,

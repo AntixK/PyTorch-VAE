@@ -73,11 +73,11 @@ class VampVAE(BaseVAE):
                             nn.LeakyReLU(),
                             nn.Conv2d(hidden_dims[-1], out_channels= 3,
                                       kernel_size= 3, padding= 1),
-                            nn.Tanh())
+                            nn.Sigmoid())
 
         self.pseudo_input = torch.eye(self.num_components, requires_grad= False)
         self.embed_pseudo = nn.Sequential(nn.Linear(self.num_components, 12288),
-                                          nn.Hardtanh(0.0, 1.0)) # 3x64x64 = 12288
+                                          nn.HardSigmoid(0.0, 1.0)) # 3x64x64 = 12288
 
     def encode(self, input: Tensor) -> List[Tensor]:
         """
