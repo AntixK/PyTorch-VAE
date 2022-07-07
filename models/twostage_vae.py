@@ -70,7 +70,7 @@ class TwoStageVAE(BaseVAE):
                             nn.LeakyReLU(),
                             nn.Conv2d(hidden_dims[-1], out_channels= 3,
                                       kernel_size= 3, padding= 1),
-                            nn.Tanh())
+                            nn.Sigmoid())
 
         #---------------------- Second VAE ---------------------------#
         encoder2 = []

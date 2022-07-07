@@ -76,7 +76,7 @@ class DFCVAE(BaseVAE):
                             nn.LeakyReLU(),
                             nn.Conv2d(hidden_dims[-1], out_channels= 3,
                                       kernel_size= 3, padding= 1),
-                            nn.Tanh())
+                            nn.Sigmoid())
 
         self.feature_network = vgg19_bn(pretrained=True)
 

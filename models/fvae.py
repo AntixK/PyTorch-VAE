@@ -73,7 +73,7 @@ class FactorVAE(BaseVAE):
                             nn.LeakyReLU(),
                             nn.Conv2d(hidden_dims[-1], out_channels= 3,
                                       kernel_size= 3, padding= 1),
-                            nn.Tanh())
+                            nn.Sigmoid())
 
         # Discriminator network for the Total Correlation (TC) loss
         self.discriminator = nn.Sequential(nn.Linear(self.latent_dim, 1000),
