@@ -21,6 +21,7 @@ from .miwae import *
 from .vq_vae import *
 from .betatc_vae import *
 from .dip_vae import *
+from .quantizer import *
 
 
 # Aliases
