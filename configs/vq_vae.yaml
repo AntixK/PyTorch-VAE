@@ -1,21 +1,22 @@
 model_params:
-  name: 'VQVAE'
+  name: "VQVAE"
   in_channels: 3
+  quantizer: "ema_reset"
   embedding_dim: 64
   num_embeddings: 512
   img_size: 64
-  beta: 0.25
+  beta: 1.0
+  mu: 0.99
 
 data_params:
   data_path: "Data/"
   train_batch_size: 64
-  val_batch_size:  64
+  val_batch_size: 64
   patch_size: 64
   num_workers: 4
 
-
 exp_params:
-  LR: 0.005
+  LR: 0.0003
   weight_decay: 0.0
   scheduler_gamma: 0.0
   kld_weight: 0.00025
@@ -27,4 +28,4 @@ trainer_params:
 
 logging_params:
   save_dir: "logs/"
-  name: 'VQVAE'
+  name: "VQVAE"

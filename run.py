@@ -12,6 +12,8 @@ from pytorch_lightning.utilities.seed import seed_everything
 from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint
 from dataset import VAEDataset
 from pytorch_lightning.plugins import DDPPlugin
+import setproctitle
+setproctitle.setproctitle('hychen')
 
 
 parser = argparse.ArgumentParser(description='Generic runner for VAE models')
@@ -19,7 +21,7 @@ parser.add_argument('--config',  '-c',
                     dest="filename",
                     metavar='FILE',
                     help =  'path to the config file',
-                    default='configs/vae.yaml')
+                    default='configs/vq_vae.yaml')
 
 args = parser.parse_args()
 with open(args.filename, 'r') as file:
@@ -31,7 +33,7 @@ with open(args.filename, 'r') as file:
 
 tb_logger =  TensorBoardLogger(save_dir=config['logging_params']['save_dir'],
                                name=config['model_params']['name'],)
-
+tb_logger.log_hyperparams(config)
 # For reproducibility
 seed_everything(config['exp_params']['manual_seed'], True)
 
@@ -56,7 +58,7 @@ runner = Trainer(logger=tb_logger,
 
 Path(f"{tb_logger.log_dir}/Samples").mkdir(exist_ok=True, parents=True)
 Path(f"{tb_logger.log_dir}/Reconstructions").mkdir(exist_ok=True, parents=True)
-
+Path(f"{tb_logger.log_dir}/Origin" ).mkdir(exist_ok=True, parents=True)
 
 print(f"======= Training {config['model_params']['name']} =======")
 runner.fit(experiment, datamodule=data)
