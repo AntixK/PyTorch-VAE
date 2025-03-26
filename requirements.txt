@@ -1,4 +1,4 @@
-pytorch-lightning==1.5.6
+pytorch-lightning==2.4.0
 PyYAML==6.0
 tensorboard>=2.2.0
 torch>=1.6.1
